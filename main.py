@@ -1,11 +1,4 @@
-# To Do List
-#  - Add liquid water
-#  - Water needs to pool rather than stack
-#  - Way to toggle between sand/water
-#  - Add frame (so not screen edge)
-#  - Add a shelf/solid element that works like edges
-
-import pygame, sys, random
+import pygame, sys
 from pygame.locals import *
 
 # Globals ----------------------------------------------------------------------------------------- #
@@ -14,6 +7,7 @@ WINDOW_HEIGHT = 500
 FPS = 30
 
 grains = []
+drops = []
 dirty_rects = []
 
 def main():
@@ -25,7 +19,9 @@ def main():
 
     mouse_x = 0
     mouse_y = 0
-    generate_sand = False
+    generate_particle = False
+    select_sand = True
+    select_water = False
     dirty_screen = False
 
     pygame.display.set_caption('Sandcraft')
@@ -34,6 +30,7 @@ def main():
     while True:
         dirty_rects.clear()
 
+        # Show FPS
         DISPLAYSURF.fill((0, 0, 0), pygame.Rect(0, 0, 30, 30))
         DISPLAYSURF.blit(update_fps(), (10, 0))
 
@@ -46,17 +43,31 @@ def main():
             elif event.type == MOUSEBUTTONDOWN:
                 dirty_screen = True
                 mouse_x, mouse_y = event.pos
-                generate_sand = True
+                generate_particle = True
             elif event.type == MOUSEBUTTONUP:
                 mouse_x, mouse_y = event.pos
-                generate_sand = False
+                generate_particle = False
+                refresh_screen()
+                dirty_screen = False
+            elif event.type == KEYDOWN:
+                if event.key == K_1:
+                    select_sand = True
+                    select_water = False
+                elif event.key == K_2:
+                    select_sand = False
+                    select_water = True
 
-        if generate_sand:
-            add_sand(mouse_x, mouse_y)
+        if generate_particle:
+            if select_sand:
+                add_sand(mouse_x, mouse_y)
+            elif select_water:
+                add_water(mouse_x, mouse_y)
 
         update_sand()
+        update_water()
 
-        if len(dirty_rects) == 1 and dirty_screen:
+        # Temp fix for hanging particles
+        if len(dirty_rects) < 2 and dirty_screen:
             refresh_screen()
             dirty_screen = False
 
@@ -72,7 +83,63 @@ def add_sand(x, y):
     dirty_rects.append(pygame.Rect(x, y, 1, 1))
 
 
+def add_water(x, y):
+    drops.append([x, y])
+    pix_obj = pygame.PixelArray(DISPLAYSURF)
+    pix_obj[x][y] = (0, 191, 255)
+    pix_obj.close()
+    dirty_rects.append(pygame.Rect(x, y, 1, 1))
+
+
+def update_water():
+    pix_obj = pygame.PixelArray(DISPLAYSURF)
+
+    for drop in drops:
+        if drop[1] < WINDOW_HEIGHT-1:
+            if DISPLAYSURF.get_at((drop[0], drop[1]+1)) == (0, 0, 0):
+                dirty_rects.append(pygame.Rect(drop[0], drop[1], 1, 2))
+                pix_obj[drop[0], drop[1]] = (0, 0, 0)
+                drop[1] += 1
+                pix_obj[drop[0], drop[1]] = (0, 191, 255)
+            elif DISPLAYSURF.get_at((drop[0], drop[1]+1)) == (0, 191, 255):
+                if DISPLAYSURF.get_at((drop[0]-1, drop[1] + 1)) == (0, 0, 0):
+                    dirty_rects.append(pygame.Rect(drop[0], drop[1], 1, 1))
+                    dirty_rects.append(pygame.Rect(drop[0]-1, drop[1]+1, 1, 1))
+                    pix_obj[drop[0], drop[1]] = (0, 0, 0)
+                    drop[0] -= 1
+                    drop[1] += 1
+                    pix_obj[drop[0], drop[1]] = (0, 191, 255)
+                elif DISPLAYSURF.get_at((drop[0]+1, drop[1] + 1)) == (0, 0, 0):
+                    dirty_rects.append(pygame.Rect(drop[0], drop[1], 1, 1))
+                    dirty_rects.append(pygame.Rect(drop[0]+1, drop[1]+1, 1, 1))
+                    pix_obj[drop[0], drop[1]] = (0, 0, 0)
+                    drop[0] += 1
+                    drop[1] += 1
+                    pix_obj[drop[0], drop[1]] = (0, 191, 255)
+                elif DISPLAYSURF.get_at((drop[0]-1, drop[1])) == (0, 0, 0):
+                    dirty_rects.append(pygame.Rect(drop[0], drop[1], 1, 1))
+                    dirty_rects.append(pygame.Rect(drop[0]-1, drop[1], 1, 1))
+                    pix_obj[drop[0], drop[1]] = (0, 0, 0)
+                    drop[0] -= 1
+                    pix_obj[drop[0], drop[1]] = (0, 191, 255)
+                elif DISPLAYSURF.get_at((drop[0]+1, drop[1])) == (0, 0, 0):
+                    dirty_rects.append(pygame.Rect(drop[0], drop[1], 1, 1))
+                    dirty_rects.append(pygame.Rect(drop[0]+1, drop[1], 1, 1))
+                    pix_obj[drop[0], drop[1]] = (0, 0, 0)
+                    drop[0] += 1
+                    pix_obj[drop[0], drop[1]] = (0, 191, 255)
+                else:
+                    drops.remove(drop)
+            else:
+                drops.remove(drop)
+        else:
+            drops.remove(drop)
+
+    pix_obj.close()
+
+
 def update_sand():
+
     pix_obj = pygame.PixelArray(DISPLAYSURF)
 
     for grain in grains:
@@ -115,6 +182,14 @@ def refresh_screen():
                 if DISPLAYSURF.get_at([x-1, y+1]) == (0, 0, 0) or DISPLAYSURF.get_at([x, y+1]) == (0, 0, 0) or \
                         DISPLAYSURF.get_at([x+1, y+1]) == (0, 0, 0):
                     grains.append([x, y])
+            elif DISPLAYSURF.get_at([x, y]) == (0, 191, 255):
+                if DISPLAYSURF.get_at([x-1, y+1]) == (0, 0, 0) or DISPLAYSURF.get_at([x, y+1]) == (0, 0, 0) or \
+                        DISPLAYSURF.get_at([x+1, y+1]) == (0, 0, 0):
+                    drops.append([x, y])
+                if DISPLAYSURF.get_at([x - 1, y + 1]) == (0, 191, 255) and DISPLAYSURF.get_at([x, y + 1]) == (0, 191, 255) and \
+                        DISPLAYSURF.get_at([x + 1, y + 1]) == (0, 191, 255):
+                    if DISPLAYSURF.get_at([x - 1, y]) == (0, 0, 0) or DISPLAYSURF.get_at([x+1, y]) == (0, 0, 0):
+                        drops.append([x, y])
 
 
 def update_fps():
