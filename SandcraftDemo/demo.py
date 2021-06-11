@@ -8,6 +8,7 @@ WINDOW_HEIGHT = 500
 DEF_COLOR = (0, 0, 0)
 SAND_COLOR = (255, 255, 0)
 WATER_COLOR = (0, 191, 255)
+ROCK_COLOR = (211, 211, 211)
 
 
 def update_sand(grains, surf):
@@ -60,13 +61,13 @@ def update_water(drops, surf):
             continue
 
 
-if __name__ == '__main__':
+def main():
     pygame.init()
     DISPLAYSURFACE = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
     pygame.display.set_caption('SandCraft')
     FPS = pygame.time.Clock()
 
-    draw = False
+    drawing = False
     x = 0
     y = 0
 
@@ -84,25 +85,33 @@ if __name__ == '__main__':
                 sys.exit()
             elif event.type == MOUSEBUTTONDOWN:
                 x, y = event.pos
-                draw = True
+                drawing = True
             elif event.type == MOUSEBUTTONUP:
-                draw = False
-            elif event.type == MOUSEMOTION and draw:
+                drawing = False
+            elif event.type == MOUSEMOTION and drawing:
                 x, y = event.pos
             elif event.type == KEYDOWN:
                 if event.key == K_1 or event.key == K_KP1:
                     element = 1
                 elif event.key == K_2 or event.key == K_KP2:
                     element = 2
+                elif event.key == K_3 or event.key == K_KP3:
+                    element = 3
 
-        if draw:
+        if drawing:
             if element == 1:
                 sand.append([x, y])
             elif element == 2:
                 water.append([x, y])
+            elif element == 3:
+                DISPLAYSURFACE.set_at((x, y), ROCK_COLOR)
 
         update_sand(sand, DISPLAYSURFACE)
         update_water(water, DISPLAYSURFACE)
 
         pygame.display.update()
         FPS.tick(60)
+
+
+if __name__ == '__main__':
+    main()
