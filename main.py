@@ -1,15 +1,16 @@
 import pygame, sys, random
 from pygame.locals import *
 from particle import *
-from operator import itemgetter
 
 # Globals ----------------------------------------------------------------------------------------- #
 WINDOW_WIDTH = 500
 WINDOW_HEIGHT = 500
 FPS = 30
 
+# Lists for storing particles (will need better solution)
 sand = []
 water = []
+steam = []
 
 
 def main():
@@ -51,6 +52,8 @@ def main():
                     selected_material = 2
                 elif event.key == K_3:
                     selected_material = 3
+                elif event.key == K_4:
+                    selected_material = 4
 
         if generate_particle:
             if selected_material == 1:
@@ -58,12 +61,13 @@ def main():
             elif selected_material == 2:
                 add_water_square(mouse_x, mouse_y)
             elif selected_material == 3:
+                add_steam_square(mouse_x, mouse_y)
+            elif selected_material == 4:
                 add_wood_square(mouse_x, mouse_y)
 
         update_solid(sand)
         update_liquid(water)
-
-        print(len(sand), ", ", len(water))
+        update_gas(steam)
 
         pygame.display.update()
         FPSCLOCK.tick(FPS)
@@ -83,7 +87,13 @@ def add_water(x, y):
     pix_obj.close()
 
 
-# Adds fifty random sand pixels to sand[], sorts from bottom->top, left->right
+def add_steam(x, y):
+    steam.append(Particle(x, y, pygame.time.get_ticks()))
+    pix_obj = pygame.PixelArray(DISPLAYSURF)
+    pix_obj[x][y] = COLOR_STEAM
+    pix_obj.close()
+
+
 def add_sand_square(x, y):
     for i in range(50):
         add_sand(random.randint(x-20, x+20), random.randint(y-20, y+20))
@@ -94,10 +104,16 @@ def add_water_square(x, y):
         add_water(random.randint(x-20, x+20), random.randint(y-20, y+20))
 
 
+def add_steam_square(x, y):
+    for i in range(50):
+        add_steam(random.randint(x-20, x+20), random.randint(y-20, y+20))
+
+
 def add_wood_square(x, y):
     pygame.draw.rect(DISPLAYSURF, COLOR_WOOD, (x-10, y-10, 20, 20))
 
 
+# Function for swapping the colors of two given pixels
 def swap_pixels(x1, y1, x2, y2, pix_obj):
     c1 = DISPLAYSURF.get_at((x1, y1))
     c2 = DISPLAYSURF.get_at((x2, y2))
@@ -106,6 +122,7 @@ def swap_pixels(x1, y1, x2, y2, pix_obj):
 
 
 def update_liquid(drops):
+    # Sorts all pixels from bottom->top, left->right
     drops.sort(key=lambda s: (s.y, s.x), reverse=True)
     pix_obj = pygame.PixelArray(DISPLAYSURF)
 
@@ -134,7 +151,7 @@ def update_liquid(drops):
             if new_y != dest:
                 d.vy = 0
 
-        # Obstacle immediately below particle
+        # Obstacle immediately below particle (if solid, do nothing)
         else:
             if is_liquid(DISPLAYSURF.get_at((d.x, d.y+1))):
                 # If bottom left space is empty
@@ -143,6 +160,7 @@ def update_liquid(drops):
                     d.x -= 1
                     d.y += 1
                     d.update_vx(-1)
+                    d.update_vy(1)
                     d.t = pygame.time.get_ticks()
                 # If bottom right space is empty
                 elif d.x < WINDOW_WIDTH-2 and DISPLAYSURF.get_at((d.x+1, d.y + 1)) == COLOR_AIR:
@@ -150,36 +168,51 @@ def update_liquid(drops):
                     d.x += 1
                     d.y += 1
                     d.update_vx(1)
+                    d.update_vy(1)
                     d.t = pygame.time.get_ticks()
                 # If left space is empty
                 elif d.x > 0 and DISPLAYSURF.get_at((d.x - 1, d.y)) == COLOR_AIR:
                     # Update drop's leftward velocity
                     d.update_vx(-1)
-                    dest = d.x + d.vx
+                    d.vy = 0
+                    dest_x = d.x + d.vx
+                    dest_y = d.y + abs(d.vx)
 
                     # Calculate new x-value
-                    new_x = check_x_path(d.x, d.y, dest)
-                    swap_pixels(d.x, d.y, new_x, d.y, pix_obj)
+                    new_x, new_y = check_x_path(d.x, d.y, dest_x, dest_y)
+                    swap_pixels(d.x, d.y, new_x, new_y, pix_obj)
                     d.x = new_x
+
+                    if d.y != new_y:
+                        d.update_vy(new_y - d.y)
+
+                    d.y = new_y
                     d.t = pygame.time.get_ticks()
 
                     # If hit an obstacle
-                    if new_x != dest:
+                    if new_x != dest_x:
                         d.vx = 0
                 # If right space is empty
                 elif d.x < WINDOW_WIDTH-2 and DISPLAYSURF.get_at((d.x+1, d.y)) == COLOR_AIR:
                     # Update drop's rightward velocity
                     d.update_vx(1)
-                    dest = d.x + d.vx
+                    d.vy = 0
+                    dest_x = d.x + d.vx
+                    dest_y = d.y + abs(d.vx)
 
                     # Calculate new x-value
-                    new_x = check_x_path(d.x, d.y, dest)
-                    swap_pixels(d.x, d.y, new_x, d.y, pix_obj)
+                    new_x, new_y = check_x_path(d.x, d.y, dest_x, dest_y)
+                    swap_pixels(d.x, d.y, new_x, new_y, pix_obj)
                     d.x = new_x
+
+                    if d.y != new_y:
+                        d.update_vy(new_y - d.y)
+
+                    d.y = new_y
                     d.t = pygame.time.get_ticks()
 
                     # If hit an obstacle
-                    if new_x != dest:
+                    if new_x != dest_x:
                         d.vx = 0
 
     pix_obj.close()
@@ -243,40 +276,142 @@ def update_solid(particles):
                 p.t = pygame.time.get_ticks()
             # Particle doesn't move
             else:
-                if pygame.time.get_ticks() - p.t > 1000:
+                if pygame.time.get_ticks() - p.t > 2000:
                     particles.remove(p)
 
     pix_obj.close()
 
 
-# Moves y value until reaches destination, or hits another particle
-def check_x_path(x1, y1, destination):
-    # Moving right
-    if destination > x1:
-        if destination > WINDOW_WIDTH - 1:
-            destination = WINDOW_WIDTH - 1
+def update_gas(particles):
+    # Sorts all pixels from bottom->top, left->right
+    particles.sort(key=lambda s: (s.y, s.x), reverse=True)
+    pix_obj = pygame.PixelArray(DISPLAYSURF)
 
-        while x1 != destination:
+    for p in particles:
+        # If particle is empty/not a liquid
+        if not is_gas(DISPLAYSURF.get_at((p.x, p.y))):
+            particles.remove(p)
+
+        # If particle is at top on screen, do nothing
+        elif p.y == 0:
+            return
+
+        # Remove particles if it is older than 2 seconds
+        elif pygame.time.get_ticks() - p.t > 2000:
+            pix_obj[p.x, p.y] = COLOR_AIR
+            particles.remove(p)
+
+        # If pixel above particle is empty
+        elif DISPLAYSURF.get_at((p.x, p.y - 1)) == COLOR_AIR:
+            # Update upward velocity
+            p.update_vy(-2)
+            dest = p.y + p.vy
+
+            # Calculate new y-value
+            new_y = check_y_path(p.x, p.y, dest)
+            swap_pixels(p.x, p.y, p.x, new_y, pix_obj)
+            p.y = new_y
+
+            # If hit an obstacle
+            if new_y != dest:
+                p.vy = 0
+
+        # Obstacle immediately above particle (if solid, do nothing)
+        else:
+            if is_gas(DISPLAYSURF.get_at((p.x, p.y - 1))):
+                # If top left space is empty
+                if p.x > 0 and DISPLAYSURF.get_at((p.x - 1, p.y - 1)) == COLOR_AIR:
+                    swap_pixels(p.x, p.y, p.x-1, p.y-1, pix_obj)
+                    p.x -= 1
+                    p.y -= 1
+                    p.update_vx(-1)
+                    p.update_vy(1)
+                # If top right space is empty
+                elif p.x < WINDOW_WIDTH-2 and DISPLAYSURF.get_at((p.x + 1, p.y - 1)) == COLOR_AIR:
+                    swap_pixels(p.x, p.y, p.x+1, p.y-1, pix_obj)
+                    p.x += 1
+                    p.y -= 1
+                    p.update_vx(1)
+                    p.update_vy(1)
+                # If left space is empty
+                elif p.x > 0 and DISPLAYSURF.get_at((p.x - 1, p.y)) == COLOR_AIR:
+                    # Update leftward velocity
+                    p.update_vx(-1)
+                    p.vy = 0
+                    dest_x = p.x + p.vx
+                    dest_y = p.y - abs(p.vx)
+
+                    # Calculate new x, y values
+                    new_x, new_y = check_x_path(p.x, p.y, dest_x, dest_y)
+                    swap_pixels(p.x, p.y, new_x, new_y, pix_obj)
+                    p.x = new_x
+
+                    if p.y != new_y:
+                        p.update_vy(new_y - p.y)
+
+                    p.y = new_y
+
+                    # If hit an obstacle
+                    if new_x != dest_x:
+                        p.vx = 0
+                # If right space is empty
+                elif p.x < WINDOW_WIDTH-2 and DISPLAYSURF.get_at((p.x+1, p.y)) == COLOR_AIR:
+                    # Update rightward velocity
+                    p.update_vx(1)
+                    p.vy = 0
+                    dest_x = p.x + p.vx
+                    dest_y = p.y - abs(p.vx)
+
+                    # Calculate new x, y values
+                    new_x, new_y = check_x_path(p.x, p.y, dest_x, dest_y)
+                    swap_pixels(p.x, p.y, new_x, new_y, pix_obj)
+                    p.x = new_x
+
+                    if p.y != new_y:
+                        p.update_vy(new_y - p.y)
+
+                    p.y = new_y
+
+                    # If hit an obstacle
+                    if new_x != dest_x:
+                        p.vx = 0
+
+    pix_obj.close()
+
+
+# Moves y value until reaches destination, or hits another particle
+def check_x_path(x1, y1, dest_x, dest_y):
+    # Moving right
+    if dest_x > x1:
+        if dest_x > WINDOW_WIDTH - 1:
+            dest_x = WINDOW_WIDTH - 1
+
+        while x1 != dest_x:
             if DISPLAYSURF.get_at((x1 + 1, y1)) == COLOR_AIR:
                 x1 += 1
+                y1 = check_y_path(x1, y1, dest_y)
             else:
-                return x1
+                return x1, y1
     # Moving left
     else:
-        if destination < 0:
-            destination = 0
+        if dest_x < 0:
+            dest_x = 0
 
-        while x1 != destination:
+        while x1 != dest_x:
             if DISPLAYSURF.get_at((x1 - 1, y1)) == COLOR_AIR:
                 x1 -= 1
+                y1 = check_y_path(x1, y1, dest_y)
             else:
-                return x1
+                return x1, y1
 
-    return x1
+    return x1, y1
 
 
 # Moves y value until reaches destination, or hits another particle
 def check_y_path(x1, y1, destination):
+    if y1 == destination:
+        return y1
+
     # Moving down
     if destination > y1:
         if destination > WINDOW_HEIGHT-1:
@@ -287,7 +422,7 @@ def check_y_path(x1, y1, destination):
                 y1 += 1
             else:
                 return y1
-    # Moving down
+    # Moving up
     else:
         if destination < 0:
             destination = 0

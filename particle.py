@@ -1,10 +1,8 @@
 COLOR_SAND = (255, 255, 0)
 COLOR_WATER = (0, 191, 255)
+COLOR_STEAM = (224, 224, 224)
 COLOR_WOOD = (153, 76, 0)
 COLOR_AIR = (0, 0, 0)
-
-GRAVITY = 1
-MAX_V = 10
 
 
 def is_solid(pixel):
@@ -16,6 +14,13 @@ def is_solid(pixel):
 
 def is_liquid(pixel):
     if pixel == COLOR_WATER:
+        return True
+    else:
+        return False
+
+
+def is_gas(pixel):
+    if pixel == COLOR_STEAM:
         return True
     else:
         return False
