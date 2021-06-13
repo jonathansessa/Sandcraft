@@ -5,7 +5,7 @@ from particle import *
 # Globals ----------------------------------------------------------------------------------------- #
 WINDOW_WIDTH = 500
 WINDOW_HEIGHT = 500
-FPS = 30
+FPS = 60
 
 # Lists for storing particles (will need better solution)
 sand = []
