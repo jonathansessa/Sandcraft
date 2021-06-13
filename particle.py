@@ -3,9 +3,12 @@ COLOR_WATER = (0, 191, 255)
 COLOR_WOOD = (153, 76, 0)
 COLOR_AIR = (0, 0, 0)
 
+GRAVITY = 1
+MAX_V = 10
+
 
 def is_solid(pixel):
-    if pixel == COLOR_SAND:
+    if pixel == COLOR_SAND or pixel == COLOR_WOOD:
         return True
     else:
         return False
@@ -19,53 +22,59 @@ def is_liquid(pixel):
 
 
 class Particle:
-    def __init__(self):
-        self._id = 0
-        self._velocity = 0
-        self._color = (255, 255, 255)
-        self._has_been_updated = False
-        self._x = 0
-        self._y = 0
+    def __init__(self, x, y, t):
+        self._vx = 0
+        self._vy = 0
+        self._x = x
+        self._y = y
+        self._t = t
 
-    def get_id(self):
-        return self._id
+    def get_vx(self):
+        return self._vx
 
-    def get_color(self):
-        return self._color
+    def set_vx(self, vx):
+        self._vx = vx
+
+    def get_vy(self):
+        return self._vy
+
+    def set_vy(self, vy):
+        self._vy = vy
 
     def get_x(self):
         return self._x
 
-    def get_y(self):
-        return self._y
-
     def set_x(self, x):
         self._x = x
+
+    def get_y(self):
+        return self._y
 
     def set_y(self, y):
         self._y = y
 
+    def get_t(self):
+        return self._t
+
+    def set_t(self, t):
+        self._t = t
+
+    def update_vy(self, a):
+        self._vy += a
+        if self._vy > 10:
+            self._vy = 10
+        elif self._vy < -10:
+            self._vy = -10
+
+    def update_vx(self, a):
+        self._vx += a
+        if self._vx > 5:
+            self._vx = 5
+        elif self._vx < -5:
+            self._vx = -5
+
+    vx = property(get_vx, set_vx)
+    vy = property(get_vy, set_vy)
     x = property(get_x, set_x)
     y = property(get_y, set_y)
-
-
-class Sand(Particle):
-    def __init__(self, x, y):
-        super().__init__()
-        self._id = 1
-        self._velocity = 0
-        self._color = (255, 255, 0)
-        self._has_been_updated = False
-        self._x = x
-        self._y = y
-
-
-class Water(Particle):
-    def __init__(self, x, y):
-        super().__init__()
-        self._id = 2
-        self._velocity = 0
-        self._color = (0, 191, 255)
-        self._has_been_updated = False
-        self._x = x
-        self._y = y
+    t = property(get_t, set_t)
