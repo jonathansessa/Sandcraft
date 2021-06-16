@@ -1,4 +1,5 @@
 import pygame
+import pygame_menu
 import sys
 import random
 from pygame.locals import *
@@ -16,22 +17,34 @@ steam = []
 
 
 def main():
-    main_loop()
+    init()
+    run_menu()
 
 
-def main_loop():
+def init():
     global FPSCLOCK, DISPLAYSURF, font
     pygame.init()
     font = pygame.font.SysFont("Arial", 18)
     FPSCLOCK = pygame.time.Clock()
     DISPLAYSURF = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT), 0, 32)
+    pygame.display.set_caption('Sandcraft')
+
+
+def run_menu():
+    menu = pygame_menu.Menu('Sandcraft', WINDOW_WIDTH, WINDOW_HEIGHT, theme=pygame_menu.themes.THEME_DARK)
+    menu.add.button('Start', main_loop, menu).select(False)
+    menu.add.button('Quit', pygame_menu.events.EXIT).select(False)
+    menu.mainloop(DISPLAYSURF, wait_for_event=True)
+
+
+def main_loop(m):
+    m.close()
+    DISPLAYSURF.fill((0, 0, 0))
 
     mouse_x = 0
     mouse_y = 0
     generate_particle = False
     selected_material = 1
-
-    pygame.display.set_caption('Sandcraft')
 
     # Game Loop ------------------------------------------------------------------------------------ #
     while 1:
