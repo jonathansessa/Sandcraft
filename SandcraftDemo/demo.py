@@ -104,7 +104,7 @@ def main():
             elif element == 2:
                 water.append([x, y])
             elif element == 3:
-                DISPLAYSURFACE.set_at((x, y), ROCK_COLOR)
+                pygame.draw.circle(DISPLAYSURFACE, ROCK_COLOR, (x, y), 4)
 
         update_sand(sand, DISPLAYSURFACE)
         update_water(water, DISPLAYSURFACE)
