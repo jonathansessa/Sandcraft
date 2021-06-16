@@ -1,4 +1,6 @@
-import pygame, sys, random
+import pygame
+import sys
+import random
 from pygame.locals import *
 from particle import *
 
@@ -14,6 +16,10 @@ steam = []
 
 
 def main():
+    main_loop()
+
+
+def main_loop():
     global FPSCLOCK, DISPLAYSURF, font
     pygame.init()
     font = pygame.font.SysFont("Arial", 18)
