@@ -1,95 +1,114 @@
-COLOR_SAND = (255, 255, 0)
-COLOR_WATER = (0, 191, 255)
-COLOR_STEAM = (224, 224, 224)
-COLOR_WOOD = (153, 76, 0)
-COLOR_AIR = (0, 0, 0)
+import abc
+import pygame
+from config import PARTICLE_SIZE
 
 
-def get_particles():
-    particles = {
-        "Sand": COLOR_SAND,
-        "Water": COLOR_WATER,
-        "Steam": COLOR_STEAM,
-        "Wood": COLOR_WOOD
-    }
-    return particles
+class Particle(metaclass=abc.ABCMeta):
+    def __init__(
+            self,
+            col, row,
+            vel_x, vel_y,
+            temp, temp_freeze, temp_boil,
+            density,
+            color):
 
+        self._col = col
+        self._row = row
+        self._vel_x = vel_x
+        self._vel_y = vel_y
+        self._temp = temp
+        self._temp_freeze = temp_freeze
+        self._temp_boil = temp_boil
+        self._density = density
+        self._color = color
+        self._is_live = True
+        self._needs_update = True
 
-def is_solid(pixel):
-    if pixel == COLOR_SAND or pixel == COLOR_WOOD:
-        return True
-    else:
-        return False
+    """
+        clone is an abstract method that is overridden by state classes deriving from Particle.
+        This function returns a clone of the callee.
+        This function is useful in cases such as the Painter class, which holds a template particle that
+        is cloned to the mouse's current column and row in the grid when the left mouse button is pressed.
+    """
+    @abc.abstractmethod
+    def clone(self, col, row):
+        pass
 
+    """
+        update_on_tick is an abstract method that is overridden by state classes deriving from Particle.
+        This is the function that handles the particle's movement and interactions.
+    """
+    @abc.abstractmethod
+    def update_on_tick(self, driver, grid):
+        pass
 
-def is_liquid(pixel):
-    if pixel == COLOR_WATER:
-        return True
-    else:
-        return False
+    """
+        render draws the particle to the screen using a primitive pygame Rect
+    """
+    def render(self, screen):
+        pygame.draw.rect(
+            screen,
+            self._color,
+            pygame.Rect(
+                self._col * PARTICLE_SIZE,
+                self._row * PARTICLE_SIZE,
+                PARTICLE_SIZE,
+                PARTICLE_SIZE))
 
+    """
+        force_update will flip the particle's _needs_update boolean flag to True, which will result in the
+        particle being updated the next tick.
+        This is necessary, because particles will get stuck and/or not interact properly if their update
+        flag is False, as it will never be reset.
+        This method is generally called by other particles during their own update_on_tick cycles.
+    """
+    def force_update(self):
+        self._needs_update = True
 
-def is_gas(pixel):
-    if pixel == COLOR_STEAM:
-        return True
-    else:
-        return False
+    """
+        set_pos changes the particle's current col and row in the grid
+    """
+    def set_pos(self, col, row):
+        self._col = col
+        self._row = row
 
+    """
+        __boil is defined to reduce redundancy between the state classes (solid, liquid, gas, etc.)
+    """
+    def _boil(self, driver, grid, new_particle):
+        self._is_live = False
+        near_list = grid.get_near((self._col, self._row))
+        for particle in near_list:
+            particle.force_update()
+        driver.add(new_particle)
 
-class Particle:
-    def __init__(self, x, y, t):
-        self._vx = 0
-        self._vy = 0
-        self._x = x
-        self._y = y
-        self._t = t
+    """
+        __force_update_near is defined to reduce redundancy between the state classes (solid, liquid, gas, etc.)
+    """
+    def _force_update_near(self, grid):
+        near_list = grid.get_near((self._col, self._row))
+        for particle in near_list:
+            particle.force_update()
 
-    def get_vx(self):
-        return self._vx
+    """
+        properties (read only)
+    """
+    @property
+    def col(self):
+        return self._col
 
-    def set_vx(self, vx):
-        self._vx = vx
+    @property
+    def row(self):
+        return self._row
 
-    def get_vy(self):
-        return self._vy
+    @property
+    def temp(self):
+        return self._temp
 
-    def set_vy(self, vy):
-        self._vy = vy
+    @property
+    def density(self):
+        return self._density
 
-    def get_x(self):
-        return self._x
-
-    def set_x(self, x):
-        self._x = x
-
-    def get_y(self):
-        return self._y
-
-    def set_y(self, y):
-        self._y = y
-
-    def get_t(self):
-        return self._t
-
-    def set_t(self, t):
-        self._t = t
-
-    def update_vy(self, a):
-        self._vy += a
-        if self._vy > 10:
-            self._vy = 10
-        elif self._vy < -10:
-            self._vy = -10
-
-    def update_vx(self, a):
-        self._vx += a
-        if self._vx > 5:
-            self._vx = 5
-        elif self._vx < -5:
-            self._vx = -5
-
-    vx = property(get_vx, set_vx)
-    vy = property(get_vy, set_vy)
-    x = property(get_x, set_x)
-    y = property(get_y, set_y)
-    t = property(get_t, set_t)
+    @property
+    def is_live(self):
+        return self._is_live
