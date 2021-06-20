@@ -1,37 +1,37 @@
-import pygame, sys, random
+import pygame, sys, layout, random
 from pygame.locals import *
 from particle import *
 
-# Globals ----------------------------------------------------------------------------------------- #
-WINDOW_WIDTH = 500
-WINDOW_HEIGHT = 500
-FPS = 60
+FPS = 30
 
 # Lists for storing particles (will need better solution)
 sand = []
 water = []
 steam = []
 
+WINDOW_HEIGHT = 500
+WINDOW_WIDTH = 500
 
 def main():
     global FPSCLOCK, DISPLAYSURF, font
     pygame.init()
     font = pygame.font.SysFont("Arial", 18)
     FPSCLOCK = pygame.time.Clock()
-    DISPLAYSURF = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT), 0, 32)
+
+    layout.init_screen()
+
+    DISPLAYSURF = pygame.display.get_surface()
 
     mouse_x = 0
     mouse_y = 0
     generate_particle = False
     selected_material = 1
 
-    pygame.display.set_caption('Sandcraft')
-
     # Game Loop ------------------------------------------------------------------------------------ #
     while 1:
         # Show FPS
-        DISPLAYSURF.fill((0, 0, 0), pygame.Rect(0, 0, 30, 30))
-        DISPLAYSURF.blit(update_fps(), (10, 0))
+        # DISPLAYSURF.fill((0, 0, 0), pygame.Rect(0, 0, 30, 30))
+        # DISPLAYSURF.blit(update_fps(), (10, 0))
 
         for event in pygame.event.get():
             if event.type == QUIT:

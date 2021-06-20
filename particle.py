@@ -5,6 +5,16 @@ COLOR_WOOD = (153, 76, 0)
 COLOR_AIR = (0, 0, 0)
 
 
+def get_particles():
+    particles = {
+        "Sand": COLOR_SAND,
+        "Water": COLOR_WATER,
+        "Steam": COLOR_STEAM,
+        "Wood": COLOR_WOOD
+    }
+    return particles
+
+
 def is_solid(pixel):
     if pixel == COLOR_SAND or pixel == COLOR_WOOD:
         return True
