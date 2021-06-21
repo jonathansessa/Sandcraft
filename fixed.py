@@ -1,6 +1,7 @@
 from particle import Particle
 import particle_data
 
+
 class Fixed(Particle):
     def __init__(
             self,

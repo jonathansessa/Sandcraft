@@ -1,4 +1,4 @@
-from config import WINDOW_WIDTH, WINDOW_HEIGHT, PARTICLE_SIZE
+from config import *
 from particle import Particle
 
 
@@ -16,6 +16,10 @@ class Grid:
     def __init__(self):
         self.__num_cols = int(WINDOW_WIDTH / PARTICLE_SIZE)
         self.__num_rows = int(WINDOW_HEIGHT / PARTICLE_SIZE)
+        self.__left = int(MARGIN / PARTICLE_SIZE)
+        self.__right = int((MARGIN + SANDBOX_WIDTH) / PARTICLE_SIZE)
+        self.__top = int((MARGIN * 2) / PARTICLE_SIZE)
+        self.__bottom = int((MARGIN * 2 + SANDBOX_HEIGHT) / PARTICLE_SIZE)
         self.__cells = [[None for col in range(self.__num_cols)] for row in range(self.__num_rows)]
 
     """
@@ -52,7 +56,7 @@ class Grid:
         parameter pos is a tuple representing a column and row like so: (column, row)
     """
     def is_in_bounds(self, pos):
-        return 0 <= pos[0] < self.__num_cols and 0 <= pos[1] < self.__num_rows
+        return self.__left <= pos[0] < self.__right and self.__top <= pos[1] < self.__bottom
 
     """
         exists returns whether there is a particle at the specified position.

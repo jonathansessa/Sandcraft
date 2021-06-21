@@ -42,3 +42,18 @@ template_wood = Fixed(
                     20, 0, 200,             # temperature
                     5.0,                    # density
                     (160, 82, 45))          # color
+
+template_metal = Fixed(
+                    0, 0,                   # position
+                    0, 0,                   # velocity
+                    20, -100, 1000,         # temperature
+                    15.0,                   # density
+                    (192, 192, 192))        # color
+
+# Particle dictionary used to create particle selection tool
+ELEMENTS = {
+    "FIXED": [template_wood, template_metal],
+    "SOLIDS": [template_sand],
+    "LIQUIDS": [template_water, template_lava],
+    "GASES": [template_steam]
+}

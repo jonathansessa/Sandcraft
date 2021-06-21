@@ -2,7 +2,7 @@ import pygame
 
 from grid import Grid
 from painter import Painter
-from particle_data import template_sand, template_water, template_lava, template_steam, template_wood
+from particle_data import *
 
 
 class Driver:
@@ -53,6 +53,12 @@ class Driver:
             self.__painter.set_template_particle(template_steam)
         elif pygame_event.key == pygame.K_5:
             self.__painter.set_template_particle(template_wood)
+
+    def get_current_element(self):
+        return self.__painter.get_template_particle()
+
+    def set_current_element(self, new):
+        self.__painter.set_template_particle(new)
 
     def render(self, screen):
         for particle in self.__particles:

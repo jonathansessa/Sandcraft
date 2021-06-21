@@ -18,3 +18,6 @@ class Painter:
 
     def set_template_particle(self, template_particle):
         self.__temp = template_particle
+
+    def get_template_particle(self):
+        return self.__temp
