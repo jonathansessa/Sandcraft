@@ -1,8 +1,8 @@
 import pygame
-
+from config import PARTICLE_SIZE
 from grid import Grid
 from painter import Painter
-from particle_data import template_sand, template_water, template_lava, template_steam, template_wood
+from particle_data import *
 
 
 class Driver:
@@ -10,6 +10,8 @@ class Driver:
         self.__particles = []
         self.__grid = Grid()
         self.__painter = Painter(template_sand)
+        self.__tool = "ADD"
+        self.__size = 1
 
     """
         add adds the specified particle both the particle list and the Grid the particle into the grid.
@@ -18,6 +20,41 @@ class Driver:
     def add(self, particle):
         self.__particles.append(particle)
         self.__grid.emplace(particle)
+
+    def set_tool(self, tool):
+        self.__tool = tool
+
+    def get_tool(self):
+        return self.__tool
+
+    def get_size(self):
+        return self.__size
+
+    def set_size(self, value):
+        self.__size += value
+        if self.__size < 1:
+            self.__size = 1
+        if self.__size > 6:
+            self.__size = 6
+
+    def clear_sandbox(self):
+        self.__particles.clear()
+        self.__grid = Grid()
+
+    def draw_tool_outline(self, pos, sandbox, display):
+        size = self.__size * PARTICLE_SIZE
+        s1 = sandbox.clipline(pos[0], pos[1], pos[0] + size, pos[1])
+        s2 = sandbox.clipline(pos[0] + size, pos[1], pos[0] + size, pos[1] + size)
+        s3 = sandbox.clipline(pos[0] + size, pos[1] + size, pos[0], pos[1] + size)
+        s4 = sandbox.clipline(pos[0], pos[1] + size, pos[0], pos[1])
+        if s1:
+            pygame.draw.line(display, (100, 100, 100), s1[0], s1[1])
+        if s2:
+            pygame.draw.line(display, (100, 100, 100), s2[0], s2[1])
+        if s3:
+            pygame.draw.line(display, (100, 100, 100), s3[0], s3[1])
+        if s4:
+            pygame.draw.line(display, (100, 100, 100), s4[0], s4[1])
 
     def update_on_tick(self, pygame_mouse):
         i = 0
@@ -53,6 +90,12 @@ class Driver:
             self.__painter.set_template_particle(template_steam)
         elif pygame_event.key == pygame.K_5:
             self.__painter.set_template_particle(template_wood)
+
+    def get_current_element(self):
+        return self.__painter.get_template_particle()
+
+    def set_current_element(self, new):
+        self.__painter.set_template_particle(new)
 
     def render(self, screen):
         for particle in self.__particles:

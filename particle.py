@@ -112,3 +112,7 @@ class Particle(metaclass=abc.ABCMeta):
     @property
     def is_live(self):
         return self._is_live
+
+    @property
+    def color(self):
+        return self._color
