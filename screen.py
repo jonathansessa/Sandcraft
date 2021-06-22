@@ -1,8 +1,6 @@
 from config import *
 from element_menu import *
-
-PBAR_COLOR = (33, 33, 33)
-TBAR_COLOR = (204, 204, 204)
+from tool_menu import *
 
 
 def init_screen():
@@ -21,9 +19,6 @@ def init_screen():
 
     surface.fill(BG_COLOR)
     surface.fill(SANDBOX_COLOR, pygame.Rect(MARGIN, 2 * MARGIN, SANDBOX_WIDTH, SANDBOX_HEIGHT))
-    surface.fill(TBAR_COLOR, pygame.Rect(tbar_left, tbar_top, tbar_width, tbar_height))
-
-    surface.fill(PBAR_COLOR, pygame.Rect(pbar_left, pbar_top, pbar_width, pbar_height))
 
     # Top Menu Bar
     title_font = pygame.font.Font("fonts/RetroGaming.ttf", 22)
@@ -32,8 +27,9 @@ def init_screen():
 
     # Particles Selection
     element_menu = ElementMenu(surface, pbar_left, pbar_top, pbar_width)
+    tool_menu = ToolMenu(surface, tbar_left, tbar_top, tbar_width)
 
-    return [surface, element_menu]
+    return [surface, element_menu, tool_menu]
 
 
 def in_sandbox(x, y):

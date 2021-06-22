@@ -27,7 +27,7 @@ template_lava = Liquid(
                     0, 1,                   # velocity
                     1000, -1000, 10000,     # temperature
                     2.0,                    # density
-                    (255, 0, 0))            # color
+                    (153, 0, 0))            # color
 
 template_steam = Gas(
                     0, 0,                   # position

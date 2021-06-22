@@ -25,13 +25,16 @@ class ElementMenu:
                 sect_y += new_section.get_height() + 20
         self._height = sect_y - self._y
 
+    # Checks if a button was clicked, then changes corresponding button to active
     def update(self, driver, x, y):
-        for button in element_buttons:
-            button.set_inactive()
-            if button.contains(x, y):
-                button.set_active()
-                driver.set_current_element(button.get_element())
-            button.update()
+        for b in element_buttons:
+            if b.contains(x, y):
+                for button in element_buttons:
+                    button.set_inactive()
+                    if button.contains(x, y):
+                        button.set_active()
+                        driver.set_current_element(button.get_element())
+                    button.update()
 
     def contains(self, x, y):
         if x < self._x or self._x + self._width < x:
