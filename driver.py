@@ -10,8 +10,9 @@ class Driver:
         self.__particles = []
         self.__grid = Grid()
         self.__painter = Painter(template_sand)
-        self.__tool = "ADD"
-        self.__size = 1
+        self._tool = "ADD"
+        self._size = 1
+        self._tool_use = False
 
     """
         add adds the specified particle both the particle list and the Grid the particle into the grid.
@@ -21,28 +22,43 @@ class Driver:
         self.__particles.append(particle)
         self.__grid.emplace(particle)
 
-    def set_tool(self, tool):
-        self.__tool = tool
+    def delete(self, particle):
+        try:
+            self.__particles.remove(particle)
+            self.__grid.remove(particle)
+            for p in self.__grid.get_near((particle.col, particle.row)):
+                p.force_update()
+        except ValueError:
+            pass
 
     def get_tool(self):
-        return self.__tool
+        return self._tool
+
+    def set_tool(self, tool):
+        self._tool = tool
 
     def get_size(self):
-        return self.__size
+        return self._size
 
+    # Boolean for if tool is active
+    def set_tool_use(self, status):
+        self._tool_use = status
+
+    # Changes brush size with min, max value
     def set_size(self, value):
-        self.__size += value
-        if self.__size < 1:
-            self.__size = 1
-        if self.__size > 6:
-            self.__size = 6
+        self._size += value
+        if self._size < 1:
+            self._size = 1
+        if self._size > 6:
+            self._size = 6
 
     def clear_sandbox(self):
         self.__particles.clear()
         self.__grid = Grid()
 
+    # Draws gray square outline instead of mouse, clips so not drawn outside sandbox
     def draw_tool_outline(self, pos, sandbox, display):
-        size = self.__size * PARTICLE_SIZE
+        size = self._size * PARTICLE_SIZE
         s1 = sandbox.clipline(pos[0], pos[1], pos[0] + size, pos[1])
         s2 = sandbox.clipline(pos[0] + size, pos[1], pos[0] + size, pos[1] + size)
         s3 = sandbox.clipline(pos[0] + size, pos[1] + size, pos[0], pos[1] + size)
@@ -56,7 +72,8 @@ class Driver:
         if s4:
             pygame.draw.line(display, (100, 100, 100), s4[0], s4[1])
 
-    def update_on_tick(self, pygame_mouse):
+    # For each particle, update its position. Then, apply tool if active
+    def update_particles(self, mouse):
         i = 0
 
         while i < len(self.__particles):
@@ -68,28 +85,8 @@ class Driver:
             else:
                 i += 1
 
-        self.__painter.update_on_tick(pygame_mouse, self, self.__grid)
-
-    """
-        For now, you can select a particle by pressing these keys:
-            1: sand     (solid)
-            2: water    (liquid)
-            3: lava     (liquid)
-            4: steam    (gas)
-            5: wood     (fixed)
-        This functionality should be replaced with a particle picker UI, or something of the sort.
-    """
-    def update_on_key_down(self, pygame_event):
-        if pygame_event.key == pygame.K_1:
-            self.__painter.set_template_particle(template_sand)
-        elif pygame_event.key == pygame.K_2:
-            self.__painter.set_template_particle(template_water)
-        elif pygame_event.key == pygame.K_3:
-            self.__painter.set_template_particle(template_lava)
-        elif pygame_event.key == pygame.K_4:
-            self.__painter.set_template_particle(template_steam)
-        elif pygame_event.key == pygame.K_5:
-            self.__painter.set_template_particle(template_wood)
+        if self._tool_use:
+            self.__painter.use_tool(mouse, self, self.__grid)
 
     def get_current_element(self):
         return self.__painter.get_template_particle()
