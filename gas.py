@@ -53,10 +53,7 @@ class Gas(Particle):
             else:
                 collider = grid.get(next_pos)
 
-                if self._temp_boil <= collider.temp:
-                    self._boil(driver, grid, particle_data.template_steam.clone(self._col, self._row))
-
-                elif self._density > collider.density:
+                if self._density > collider.density:
                     self._force_update_near(grid)
                     grid.swap(pos, next_pos)
 

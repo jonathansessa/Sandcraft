@@ -32,8 +32,23 @@ class Fixed(Particle):
         near_list = grid.get_near((self._col, self._row))
 
         for particle in near_list:
+
+            temp_diff = (self._temp - particle._temp) / 10
+            particle._update_temp(particle, particle._temp + temp_diff)
+            self._update_temp(self, self._temp - temp_diff)
+
+            if particle._temp_boil <= particle._temp:
+                particle._boil(driver, grid, particle_data.template_steam.clone(particle._col, particle._row))
+
+            if (particle.color == (153, 0, 0)) and (particle._temp_freeze >= particle._temp):
+                particle._freeze(driver, grid, particle_data.template_basalt.clone(particle._col, particle._row))
+
+            """
             if self._temp_boil < particle.temp:
                 self._boil(driver, grid, particle_data.template_steam.clone(self._col, self._row))
                 break
+                """
+
+
 
         self._needs_update = False

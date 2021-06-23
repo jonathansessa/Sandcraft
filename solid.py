@@ -42,8 +42,12 @@ class Solid(Particle):
             else:
                 collider = grid.get(next_pos)
 
-                if self._temp_boil <= collider.temp:
-                    self._boil(driver, grid, particle_data.template_steam.clone(self._col, self._row))
+                temp_diff = (self._temp - collider._temp) / 10
+                collider._update_temp(collider, collider._temp + temp_diff)
+                self._update_temp(self, self._temp - temp_diff)
+
+                if self._temp_freeze <= self._temp:
+                    self._melt(driver, grid, particle_data.template_lava.clone(self._col, self._row))
                 elif self._density > collider.density:
                     self._force_update_near(grid)
                     grid.swap(pos, next_pos)

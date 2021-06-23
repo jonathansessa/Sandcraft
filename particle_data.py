@@ -11,7 +11,7 @@ from fixed import Fixed
 template_sand = Solid(
                     0, 0,                   # position
                     0, 1,                   # velocity
-                    20, -100, 500,          # temperature
+                    20, 800, 5000,          # temperature
                     1.5,                    # density
                     (255, 255, 0))          # color
 
@@ -25,7 +25,7 @@ template_water = Liquid(
 template_lava = Liquid(
                     0, 0,                   # position
                     0, 1,                   # velocity
-                    1000, -1000, 10000,     # temperature
+                    2000, 800, 10000,       # temperature
                     2.0,                    # density
                     (153, 0, 0))            # color
 
@@ -50,10 +50,17 @@ template_metal = Fixed(
                     15.0,                   # density
                     (192, 192, 192))        # color
 
+template_basalt = Fixed(
+                    0, 0,                   # position
+                    0, 0,                   # velocity
+                    600, 300, 800,        # temperature
+                    15.0,                   # density
+                    (41, 58, 79))        # color
+
 # Particle dictionary used to create particle selection tool
 ELEMENTS = {
     "FIXED": [template_wood, template_metal],
-    "SOLIDS": [template_sand],
+    "SOLIDS": [template_sand, template_basalt],
     "LIQUIDS": [template_water, template_lava],
     "GASES": [template_steam]
 }
