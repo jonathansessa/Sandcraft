@@ -31,6 +31,9 @@ class Grid:
     def emplace(self, particle):
         self.__cells[particle.row][particle.col] = particle
 
+    def remove(self, particle):
+        self.__cells[particle.row][particle.col] = None
+
     """
         swap switches the positions of two particles in the grid, also updating the positions of each particle.
         
