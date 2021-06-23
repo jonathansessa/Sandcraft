@@ -1,4 +1,8 @@
+import os
+import time
+
 import pygame
+import pickle
 from config import PARTICLE_SIZE
 from grid import Grid
 from painter import Painter
@@ -100,3 +104,20 @@ class Driver:
     def render(self, screen):
         for particle in self.__particles:
             particle.render(screen)
+
+    def save_state(self):
+        print('Save...')
+        os.makedirs(os.path.dirname('./data/'), exist_ok=True)
+        currtime = time.time()
+        with open('data/sc_state_%d.pickle' % currtime, 'wb') as file:
+            pickle.dump(self.__particles, file)
+        print('Saved!')
+
+    def load_state(self):
+        if os.path.exists('./data/'):
+            print('Loading...')
+            with open('data/sc_state.pickle', 'rb') as file:
+                self.__particles = pickle.load(file)
+            print('Loaded!')
+        else:
+            print('Data does not exist!')
