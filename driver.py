@@ -74,16 +74,11 @@ class Driver:
 
     # For each particle, update its position. Then, apply tool if active
     def update_particles(self, mouse):
-        i = 0
+        for particle in self.__particles:
+            particle.update_on_tick(self, self.__grid)
 
-        while i < len(self.__particles):
-            self.__particles[i].update_on_tick(self, self.__grid)
-
-            if self.__particles[i].is_live is False:
-                self.__particles[i] = None
-                self.__particles.pop(i)
-            else:
-                i += 1
+            if particle.is_live is False:
+                self.__particles.remove(particle)
 
         if self._tool_use:
             self.__painter.use_tool(mouse, self, self.__grid)

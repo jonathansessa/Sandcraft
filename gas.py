@@ -1,5 +1,5 @@
 import random
-
+import pygame
 from particle import Particle
 import particle_data
 
@@ -12,13 +12,13 @@ class Gas(Particle):
             temp, temp_freeze, temp_boil,
             density,
             color):
-
         super().__init__(
             col, row,
             vel_x, vel_y,
             temp, temp_freeze, temp_boil,
             density,
             color)
+        self._lifespan = pygame.time.get_ticks() + 3000
 
     def clone(self, col, row):
         return Gas(
@@ -29,6 +29,10 @@ class Gas(Particle):
             self._color)
 
     def update_on_tick(self, driver, grid):
+        if pygame.time.get_ticks() > self._lifespan:
+            driver.delete(self)
+            return
+
         if self._needs_update is False:
             return
 
