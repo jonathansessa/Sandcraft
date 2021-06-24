@@ -5,7 +5,6 @@ from config import *
 from driver import Driver
 from screen import *
 
-
 if __name__ == '__main__':
     pygame.init()
 
