@@ -1,6 +1,6 @@
 import pygame
 from config import PARTICLE_SIZE
-from grid import Grid
+from grid import Grid, px_to_cell
 from painter import Painter
 from particle_data import *
 
@@ -58,7 +58,23 @@ class Driver:
 
     # Draws gray square outline instead of mouse, clips so not drawn outside sandbox
     def draw_tool_outline(self, pos, sandbox, display):
-        size = self._size * PARTICLE_SIZE
+        if self.get_tool() == "INSPECT":
+            size = PARTICLE_SIZE
+
+            x = px_to_cell(pos[0])
+            y = px_to_cell(pos[1])
+
+            font = pygame.font.Font("fonts/RetroGaming.ttf", 11)
+            if self.__grid.exists((x, y)):
+                current = self.__grid.get((x, y))
+                label = font.render(f"{current.name}: {x}, {y}", True, (255, 255, 255), (0, 0, 0))
+            else:
+                label = font.render(f"Empty: {x}, {y}", True, (255, 255, 255), (0, 0, 0))
+            label.set_clip(sandbox)
+            display.blit(label, (pos[0]+10, pos[1]))
+        else:
+            size = self._size * PARTICLE_SIZE
+
         s1 = sandbox.clipline(pos[0], pos[1], pos[0] + size, pos[1])
         s2 = sandbox.clipline(pos[0] + size, pos[1], pos[0] + size, pos[1] + size)
         s3 = sandbox.clipline(pos[0] + size, pos[1] + size, pos[0], pos[1] + size)

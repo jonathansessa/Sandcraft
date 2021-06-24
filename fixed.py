@@ -9,13 +9,15 @@ class Fixed(Particle):
             vel_x, vel_y,
             temp, temp_freeze, temp_boil,
             density,
-            color):
+            color,
+            name):
         super().__init__(
             col, row,
             vel_x, vel_y,
             temp, temp_freeze, temp_boil,
             density,
-            color)
+            color,
+            name)
 
     def clone(self, col, row):
         return Fixed(
@@ -23,7 +25,8 @@ class Fixed(Particle):
             self._vel_x, self._vel_y,
             self._temp, self._temp_freeze, self._temp_boil,
             self._density,
-            self._color)
+            self._color,
+            self._name)
 
     def update_on_tick(self, driver, grid):
         if self._needs_update is False:
