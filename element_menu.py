@@ -1,35 +1,40 @@
 import pygame
 from particle_data import ELEMENTS
 
-element_buttons = []
-
 
 class ElementMenu:
+    pygame.font.init()
+    FONT = pygame.font.Font("fonts/RetroGaming.ttf", 11)
+    FONT_COLOR = (255, 255, 255)
+    BUTTON_SIZE = 18
+    MARGIN = 6
+
     def __init__(self, surface, x, y, width):
         self._surface = surface
         self._x = x
         self._y = y
         self._width = width
-        self._height = 0
+        self._height = 300
+        self.element_buttons = []
         self.draw()
 
+    # Creates the menu by building each section based on particle_data
     def draw(self):
         sect_x = self._x
         sect_y = self._y
-        sect_w = (self._width / 2) - 9
+        sect_w = self._width / 2 - self.MARGIN
         for category in ELEMENTS:
-            new_section = ElementSection(self._surface, sect_x, sect_y, sect_w, category, ELEMENTS[category])
-            sect_x += sect_w + 10
-            if sect_x > self._x + self._width:
+            sect_h = self.create_section(self._surface, sect_x, sect_y, sect_w, category, ELEMENTS[category])
+            sect_x += sect_w + self.MARGIN
+            if sect_x >= self._x + self._width:
                 sect_x = self._x
-                sect_y += new_section.get_height() + 20
-        self._height = sect_y - self._y
+                sect_y += sect_h + 2 * self.MARGIN
 
-    # Checks if a button was clicked, then changes corresponding button to active
+    # First checks if a button was clicked, then changes corresponding button to active
     def update(self, driver, x, y):
-        for b in element_buttons:
+        for b in self.element_buttons:
             if b.contains(x, y):
-                for button in element_buttons:
+                for button in self.element_buttons:
                     button.set_inactive()
                     if button.contains(x, y):
                         button.set_active()
@@ -43,108 +48,85 @@ class ElementMenu:
             return False
         return True
 
+    def create_section(self, surface, x, y, width, title, elements):
+        t = self.FONT.render(title, True, self.FONT_COLOR)
+        surface.blit(t, (x, y))
 
-class ElementSection:
-    def __init__(self, surface, x, y, width, title, elements):
-        self._surface = surface
-        self._x = x
-        self._y = y
-        self._width = width
-        self._height = 0
-        self._title = title
-        self._elements = elements
-        self.draw()
+        left = x
+        top = y + t.get_height() + self.MARGIN/2
 
-    def draw(self):
-        font = pygame.font.Font("fonts/RetroGaming.ttf", 11)
-        t = font.render(self._title, True, pygame.Color(255, 255, 255))
-        self._surface.blit(t, (self._x, self._y))
+        for e in elements:
+            self.element_buttons.append(self.ElementButton(surface, left, top, self.BUTTON_SIZE, self.BUTTON_SIZE, e))
+            left += self.BUTTON_SIZE + self.MARGIN
+            if left + self.BUTTON_SIZE > x + width:
+                left = x
+                top += self.BUTTON_SIZE + self.MARGIN
 
-        top = self._y + 11 + 7
-        left = self._x
+        return top + self.BUTTON_SIZE - self._y
 
-        for e in self._elements:
-            new_button = ElementButton(self._surface, left, top, 16, 16, e)
-            left += 20
+    class ElementButton:
+        ACTIVE_COLOR = (255, 0, 0)
 
-        self._height = 11 + 7 + 15
+        def __init__(self, surface, x, y, width, height, template_particle):
+            self._surface = surface
+            self._x = x
+            self._y = y
+            self._width = width
+            self._height = height
+            self._particle = template_particle
+            self._active = False
+            self._enabled = True
+            self._unlocked = True
+            self.update()
 
-    def get_height(self):
-        return self._height
+        # Redraws button based on particle and if unlocked/enabled/active
+        def update(self):
+            button = pygame.Rect(self._x, self._y, self._width, self._height)
 
-    def contains(self, x, y):
-        if x < self._x or self._x + self._width < x:
-            return False
+            # If element is locked draw a black square with a question mark, otherwise draw square with element color
+            if not self._unlocked:
+                pygame.draw.rect(self._surface, (0, 0, 0), button)
+                font = pygame.font.Font("fonts/RetroGaming.ttf", 11)
+                q_mark = font.render("?", True, pygame.Color(255, 255, 255))
+                self._surface.blit(q_mark, (self._x + 4, self._y + 1))
+            else:
+                pygame.draw.rect(self._surface, self._particle.color, button)
 
-        if y < self._y or self._y + self._height < y:
-            return False
+            # If element is not enabled, draw a semi-transparent white square over it
+            if not self._enabled:
+                s = pygame.Surface((self._width, self._height), pygame.SRCALPHA)
+                s.fill((150, 150, 150, 180))
+                self._surface.blit(s, (self._x, self._y))
 
-        return True
+            # If element is currently active/selected, draw a red line around button
+            if self._active:
+                pygame.draw.lines(self._surface, self.ACTIVE_COLOR, True, ((self._x, self._y),
+                                                                         (self._x + self._width-1, self._y),
+                                                                         (self._x + self._width-1, self._y + self._height-1),
+                                                                         (self._x, self._y + self._height-1)))
 
+            return button
 
-class ElementButton:
-    def __init__(self, surface, x, y, width, height, template_particle):
-        self._surface = surface
-        self._x = x
-        self._y = y
-        self._width = width
-        self._height = height
-        self._particle = template_particle
-        self._active = False
-        self._enabled = True
-        self._unlocked = True
-        self.update()
-        element_buttons.append(self)
+        def get_element(self):
+            return self._particle
 
-    # Redraws button, returns bounding Rect for refresh
-    def update(self):
-        button = pygame.Rect(self._x, self._y, self._width, self._height)
+        def set_active(self):
+            self._active = True
 
-        # If element is locked draw a black square with a question mark, otherwise draw square with element color
-        if not self._unlocked:
-            pygame.draw.rect(self._surface, (0, 0, 0), button)
-            font = pygame.font.Font("fonts/RetroGaming.ttf", 11)
-            q_mark = font.render("?", True, pygame.Color(255, 255, 255))
-            self._surface.blit(q_mark, (self._x + 4, self._y + 1))
-        else:
-            pygame.draw.rect(self._surface, self._particle.color, button)
+        def set_inactive(self):
+            self._active = False
 
-        # If element is not enabled, draw a semi-transparent white square over it
-        if not self._enabled:
-            s = pygame.Surface((self._width, self._height), pygame.SRCALPHA)
-            s.fill((150, 150, 150, 180))
-            self._surface.blit(s, (self._x, self._y))
+        def set_enabled(self):
+            self._enabled = True
 
-        # If element is currently active/selected, draw a white line around button
-        if self._active:
-            pygame.draw.lines(self._surface, (255, 0, 0), True, ((self._x, self._y),
-                                                                     (self._x + self._width-1, self._y),
-                                                                     (self._x + self._width-1, self._y + self._height-1),
-                                                                     (self._x, self._y + self._height-1)))
+        def set_disabled(self):
+            self._enabled = False
 
-        return button
+        def contains(self, x, y):
+            if x < self._x or self._x + self._width < x:
+                return False
 
-    def get_element(self):
-        return self._particle
+            if y < self._y or self._y + self._height < y:
+                return False
 
-    def set_active(self):
-        self._active = True
-
-    def set_inactive(self):
-        self._active = False
-
-    def set_enabled(self):
-        self._enabled = True
-
-    def set_disabled(self):
-        self._enabled = False
-
-    def contains(self, x, y):
-        if x < self._x or self._x + self._width < x:
-            return False
-
-        if y < self._y or self._y + self._height < y:
-            return False
-
-        return True
-
+            return True
