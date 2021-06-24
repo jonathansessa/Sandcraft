@@ -1,10 +1,12 @@
 import os
-import pygame
+import time
 import pickle
-from config import PARTICLE_SIZE
+import pygame
+from config import PARTICLE_SIZE, SANDBOX_WIDTH, WINDOW_HEIGHT, SANDBOX_Y
 from grid import Grid
 from painter import Painter
 from particle_data import *
+from particle import Particle
 
 
 class Driver:
@@ -95,21 +97,45 @@ class Driver:
         for particle in self.__particles:
             particle.render(screen)
 
-    def save_state(self):
-        print('Save...')
+    def save_state(self, screen):
         os.makedirs(os.path.dirname('./data/'), exist_ok=True)
-        with open('data/sc_state.pickle', 'wb') as file:
+        curr = time.time()
+        with open('data/sc_state_%d.pickle' % curr, 'wb') as file:
             pickle.dump(self.__particles, file)
-        print('Saved!')
+        self.print_message(screen, 'Saved!')
 
-    def load_state(self):
+    def load_state(self, screen):
         if os.path.exists('./data/'):
-            print('Loading...')
-            self.clear_sandbox()
-            with open('data/sc_state.pickle', 'rb') as file:
-                particles = pickle.load(file)
-                for particle in particles:
-                    self.add(particle)
-            print('Loaded!')
+            self.print_message(screen, 'Loading...')
+            recent = 0
+            for filename in os.listdir('./data/'):
+                f = os.path.join('data', filename)
+                if os.path.isfile(f) and filename.split('.')[-1] == 'pickle':  # check for pickle file
+                    try:
+                        timestamp = int(filename.split('.')[-2].split('_')[-1])
+                        recent = timestamp if timestamp > recent else recent  # grab most recent file
+                    except ValueError or IndexError:
+                        continue
+            if recent != 0:
+                with open('data/sc_state_%d.pickle' % recent, 'rb') as file:
+                    particles = pickle.load(file)
+                    try:
+                        self.clear_sandbox()
+                        for particle in particles:
+                            if isinstance(particle, Particle):
+                                self.add(particle)
+                            else:
+                                raise ValueError
+                        self.print_message(screen, 'Success: Loaded!')
+                    except ValueError:
+                        self.print_message(screen, 'Error: Invalid file data!')
+            else:
+                self.print_message(screen, 'Error: No state files detected!')
         else:
-            print('Data does not exist!')
+            self.print_message(screen, 'Error: Data directory does not exist!')
+
+    def print_message(self, screen, text):
+        print_font = pygame.font.Font("fonts/RetroGaming.ttf", 22)
+        text_rect = print_font.render(text, True, pygame.Color(255, 255, 255))
+        screen.blit(text_rect, text_rect.get_rect().move(
+            (SANDBOX_WIDTH / 2 - text_rect.get_width() / 2, WINDOW_HEIGHT - SANDBOX_Y)))

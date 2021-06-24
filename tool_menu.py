@@ -38,9 +38,9 @@ class ToolMenu:
                         elif button.get_tool() == "CLEAR":
                             driver.clear_sandbox()
                         elif button.get_tool() == "SAVE":
-                            driver.save_state()
+                            driver.save_state(self._surface)
                         elif button.get_tool() == "LOAD":
-                            driver.load_state()
+                            driver.load_state(self._surface)
                         elif button.get_tool() == "-":
                             driver.set_size(-1)
                         elif button.get_tool() == "+":
