@@ -10,7 +10,9 @@ class Particle(metaclass=abc.ABCMeta):
             vel_x, vel_y,
             temp, temp_freeze, temp_boil,
             density,
-            color):
+            color,
+            type,
+            flammability):
 
         self._col = col
         self._row = row
@@ -23,6 +25,8 @@ class Particle(metaclass=abc.ABCMeta):
         self._color = color
         self._is_live = True
         self._needs_update = True
+        self._type = type
+        self._flammability = flammability
 
     """
         clone is an abstract method that is overridden by state classes deriving from Particle.
@@ -137,3 +141,7 @@ class Particle(metaclass=abc.ABCMeta):
     @property
     def color(self):
         return self._color
+
+    @property
+    def type(self):
+        return self._type

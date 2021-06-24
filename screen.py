@@ -18,7 +18,9 @@ def init_screen():
     pbar_left = 2 * MARGIN + tbar_width
 
     surface.fill(BG_COLOR)
-    surface.fill(SANDBOX_COLOR, pygame.Rect(MARGIN, 2 * MARGIN, SANDBOX_WIDTH, SANDBOX_HEIGHT))
+
+    sandbox = pygame.Rect(MARGIN, 2 * MARGIN, SANDBOX_WIDTH, SANDBOX_HEIGHT)
+    surface.fill(SANDBOX_COLOR, sandbox)
 
     # Top Menu Bar
     title_font = pygame.font.Font("fonts/RetroGaming.ttf", 22)
@@ -29,7 +31,7 @@ def init_screen():
     element_menu = ElementMenu(surface, pbar_left, pbar_top, pbar_width)
     tool_menu = ToolMenu(surface, tbar_left, tbar_top, tbar_width)
 
-    return [surface, element_menu, tool_menu]
+    return [surface, sandbox, element_menu, tool_menu]
 
 
 def in_sandbox(x, y):

@@ -10,13 +10,17 @@ class Liquid(Particle):
             vel_x, vel_y,
             temp, temp_freeze, temp_boil,
             density,
-            color):
+            color,
+            type,
+            flammability):
         super().__init__(
             col, row,
             vel_x, vel_y,
             temp, temp_freeze, temp_boil,
             density,
-            color)
+            color,
+            type,
+            flammability)
 
     def clone(self, col, row):
         return Liquid(
@@ -24,7 +28,9 @@ class Liquid(Particle):
             self._vel_x, self._vel_y,
             self._temp, self._temp_freeze, self._temp_boil,
             self._density,
-            self._color)
+            self._color,
+            self._type,
+            self._flammability)
 
     def update_on_tick(self, driver, grid):
         if self._needs_update is False:
@@ -41,11 +47,15 @@ class Liquid(Particle):
                 self._force_update_near(grid)
                 grid.swap(pos, next_pos)
             else:
+
                 collider = grid.get(next_pos)
 
-                temp_diff = (self._temp - collider._temp) / 10
-                collider._update_temp(collider, collider._temp + temp_diff)
-                self._update_temp(self, self._temp - temp_diff)
+                near_list = grid.get_near((self._col, self._row))
+                for particle in near_list:
+
+                    temp_diff = (self._temp - particle._temp) / 50
+                    particle._update_temp(particle, particle._temp + temp_diff)
+                    self._update_temp(self, self._temp - temp_diff)
 
                 if self._temp_boil <= self._temp:
                     self._boil(driver, grid, particle_data.template_steam.clone(self._col, self._row))
@@ -53,7 +63,7 @@ class Liquid(Particle):
                 if self._temp_freeze >= self._temp:
                     self._freeze(driver, grid, particle_data.template_basalt.clone(self._col, self._row))
 
-                elif self._density > collider.density:
+                if self._density > collider.density:
                     self._force_update_near(grid)
                     grid.swap(pos, next_pos)
                 else:
