@@ -1,4 +1,5 @@
 import pygame
+import config
 
 
 class ToolMenu:
@@ -7,8 +8,8 @@ class ToolMenu:
         self._x = x
         self._y = y
         self._width = width
-        self._height = 30
-        self._TOOLS = ["ADD", "DELETE", "LINE", "INSPECT", "CLEAR"]
+        self._height = 100
+        self._TOOLS = ["ADD", "DELETE", "LINE", "RECT", "INSPECT", "CLEAR"]
         self.tool_buttons = []
         self.draw()
 
@@ -17,11 +18,18 @@ class ToolMenu:
         button_y = self._y
         for tool in self._TOOLS:
             new_button = self.ToolButton(self._surface, button_x, button_y, tool)
-            button_x += new_button.get_width() + 10
-            if button_x > self._x + self._width:
+
+            # If new button is outside of tool menu
+            if button_x + new_button.get_width() > self._x + self._width:
+                pygame.draw.rect(self._surface, config.BG_COLOR,
+                                 pygame.Rect(button_x, button_y, new_button.get_width(), new_button.get_height()))
                 button_x = self._x
-                button_y += new_button.get_height() + 10
+                button_y = self._y + new_button.get_height() + 10
+                new_button = self.ToolButton(self._surface, button_x, button_y, tool)
+
+            button_x += new_button.get_width() + 10
             self.tool_buttons.append(new_button)
+
         self.draw_adjustment(1)
 
     # Checks if a button was clicked, then changes corresponding button to active
@@ -31,7 +39,7 @@ class ToolMenu:
                 for button in self.tool_buttons:
                     button.set_inactive()
                     if button.contains(x, y):
-                        if button.get_tool() in ["ADD", "DELETE", "LINE", "INSPECT"]:
+                        if button.get_tool() in ["ADD", "DELETE", "LINE", "RECT", "INSPECT"]:
                             button.set_active(driver)
                         elif button.get_tool() == "CLEAR":
                             driver.clear_sandbox()
@@ -49,7 +57,7 @@ class ToolMenu:
         return True
 
     def draw_adjustment(self, value):
-        top = self._y + 50
+        top = self._y + 70
         left = self._x
 
         font = pygame.font.Font("fonts/RetroGaming.ttf", 11)
