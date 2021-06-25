@@ -28,8 +28,9 @@ def init_screen():
     surface.blit(title_text, (MARGIN, (2*MARGIN - 22)/3))
 
     # Particles Selection
-    element_menu = ElementMenu(surface, pbar_left, pbar_top, pbar_width)
     tool_menu = ToolMenu(surface, tbar_left, tbar_top, tbar_width)
+    element_menu = ElementMenu(surface, pbar_left, pbar_top, pbar_width)
+
 
     return [surface, sandbox, element_menu, tool_menu]
 
