@@ -62,27 +62,43 @@ class Driver:
 
     # Draws gray square outline instead of mouse, clips so not drawn outside sandbox
     def draw_tool_outline(self, pos, sandbox, display):
-        if self._tool == "INSPECT":
-            size = PARTICLE_SIZE
+        if self._tool == "LINE" and self._line_active:
+            r = math.atan2((pos[1] - self._line_start[1]), (pos[0] - self._line_start[0])) + math.radians(90)
+            width = self._size * PARTICLE_SIZE
 
-            x = px_to_cell(pos[0])
-            y = px_to_cell(pos[1])
+            s1 = sandbox.clipline(self._line_start[0], self._line_start[1], pos[0], pos[1])
+            s2 = sandbox.clipline(pos[0], pos[1], pos[0] + (width * math.cos(r)), pos[1] + (width * math.sin(r)))
+            s3 = sandbox.clipline(self._line_start[0], self._line_start[1], self._line_start[0] +
+                                  (width * math.cos(r)), self._line_start[1] + (width * math.sin(r)))
+            s4 = sandbox.clipline(self._line_start[0] + (width * math.cos(r)), self._line_start[1] +
+                                  (width * math.sin(r)), pos[0] + (width * math.cos(r)), pos[1] +
+                                  (width * math.sin(r)))
 
-            font = pygame.font.Font("fonts/RetroGaming.ttf", 11)
-            if self.__grid.exists((x, y)):
-                current = self.__grid.get((x, y))
-                label = font.render(f"{current.name}: {x}, {y}", True, (255, 255, 255), (0, 0, 0))
-            else:
-                label = font.render(f"Empty: {x}, {y}", True, (255, 255, 255), (0, 0, 0))
-            label.set_clip(sandbox)
-            display.blit(label, (pos[0]+10, pos[1]))
         else:
-            size = self._size * PARTICLE_SIZE
+            if self._tool == "INSPECT":
+                size = PARTICLE_SIZE
 
-        s1 = sandbox.clipline(pos[0], pos[1], pos[0] + size, pos[1])
-        s2 = sandbox.clipline(pos[0] + size, pos[1], pos[0] + size, pos[1] + size)
-        s3 = sandbox.clipline(pos[0] + size, pos[1] + size, pos[0], pos[1] + size)
-        s4 = sandbox.clipline(pos[0], pos[1] + size, pos[0], pos[1])
+                x = px_to_cell(pos[0])
+                y = px_to_cell(pos[1])
+
+                font = pygame.font.Font("fonts/RetroGaming.ttf", 11)
+                if self.__grid.exists((x, y)):
+                    current = self.__grid.get((x, y))
+                    label = font.render(f"{current.name}: {x}, {y}", True, (255, 255, 255), (0, 0, 0))
+                else:
+                    label = font.render(f"Empty: {x}, {y}", True, (255, 255, 255), (0, 0, 0))
+                label.set_clip(sandbox)
+                display.blit(label, (pos[0]+10, pos[1]))
+            # Draw tool for add/delete
+            else:
+                size = self._size * PARTICLE_SIZE
+
+            s1 = sandbox.clipline(pos[0], pos[1], pos[0] + size, pos[1])
+            s2 = sandbox.clipline(pos[0] + size, pos[1], pos[0] + size, pos[1] + size)
+            s3 = sandbox.clipline(pos[0] + size, pos[1] + size, pos[0], pos[1] + size)
+            s4 = sandbox.clipline(pos[0], pos[1] + size, pos[0], pos[1])
+
+        # Draw tool outlines (if they exist)
         if s1:
             pygame.draw.line(display, (100, 100, 100), s1[0], s1[1])
         if s2:
@@ -109,15 +125,18 @@ class Driver:
             return
 
         r = math.atan2((self._line_end[1] - self._line_start[1]), (self._line_end[0] - self._line_start[0]))
+        r2 = r + math.radians(90)
         d = math.floor(math.sqrt((self._line_end[0] - self._line_start[0])**2 + (self._line_end[1] - self._line_start[1])**2))
+        w = self._size * PARTICLE_SIZE
 
         for i in range(d):
-            x = self._line_start[0] + (i * math.cos(r))
-            y = self._line_start[1] + (i * math.sin(r))
+            for j in range(w):
+                x = self._line_start[0] + (i * math.cos(r)) + (j * math.cos(r2))
+                y = self._line_start[1] + (i * math.sin(r)) + (j * math.sin(r2))
 
-            (px, py) = (px_to_cell(x), px_to_cell(y))
-            if self.__grid.exists([px, py]) is False:
-                self.add(self.__painter.get_template_particle().clone(px, py))
+                (px, py) = (px_to_cell(x), px_to_cell(y))
+                if self.__grid.exists([px, py]) is False:
+                    self.add(self.__painter.get_template_particle().clone(px, py))
 
     # For each particle, update its position. Then, apply tool if active
     def update_particles(self, mouse, sandbox, display):
@@ -128,10 +147,7 @@ class Driver:
                 self.__particles.remove(particle)
 
         if self._tool_use:
-            if self._tool == "LINE" and self._line_active:
-                line = sandbox.clipline(self._line_start[0], self._line_start[1], mouse.get_pos()[0], mouse.get_pos()[1])
-                pygame.draw.line(display, (100, 100, 100), line[0], line[1])
-            elif self._tool == "ADD" or self._tool == "DELETE":
+            if self._tool == "ADD" or self._tool == "DELETE":
                 self.__painter.use_tool(mouse, self, self.__grid)
 
     def get_current_element(self):
