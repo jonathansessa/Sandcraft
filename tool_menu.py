@@ -45,8 +45,10 @@ class ToolMenu:
                             driver.clear_sandbox()
                         elif button.get_tool() == "-":
                             driver.set_size(-1)
+                            self.update_tool_size(driver)
                         elif button.get_tool() == "+":
                             driver.set_size(1)
+                            self.update_tool_size(driver)
                     button.update()
 
     def contains(self, x, y):
@@ -56,12 +58,18 @@ class ToolMenu:
             return False
         return True
 
-    def draw_adjustment(self, value):
+    def update_tool_size(self, driver):
+        tool_size = driver.get_size()
+        font = pygame.font.Font("fonts/RetroGaming.ttf", 11)
+        label = font.render(f"BRUSH SIZE: {tool_size} ", True, pygame.Color(255, 255, 255), config.BG_COLOR)
+        self._surface.blit(label, (self._x, self._y + 70))
+
+    def draw_adjustment(self, tool_size):
         top = self._y + 70
         left = self._x
 
         font = pygame.font.Font("fonts/RetroGaming.ttf", 11)
-        label = font.render("BRUSH SIZE:", True, pygame.Color(255, 255, 255))
+        label = font.render(f"BRUSH SIZE: {tool_size}", True, pygame.Color(255, 255, 255), config.BG_COLOR)
         self._surface.blit(label, (left, top))
 
         top += 20
