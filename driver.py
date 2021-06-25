@@ -1,4 +1,5 @@
 import pygame
+import math
 from config import PARTICLE_SIZE
 from grid import Grid, px_to_cell
 from painter import Painter
@@ -13,6 +14,9 @@ class Driver:
         self._tool = "ADD"
         self._size = 1
         self._tool_use = False
+        self._line_start = (0, 0)
+        self._line_end = (0, 0)
+        self._line_active = False
 
     """
         add adds the specified particle both the particle list and the Grid the particle into the grid.
@@ -58,7 +62,7 @@ class Driver:
 
     # Draws gray square outline instead of mouse, clips so not drawn outside sandbox
     def draw_tool_outline(self, pos, sandbox, display):
-        if self.get_tool() == "INSPECT":
+        if self._tool == "INSPECT":
             size = PARTICLE_SIZE
 
             x = px_to_cell(pos[0])
@@ -88,8 +92,35 @@ class Driver:
         if s4:
             pygame.draw.line(display, (100, 100, 100), s4[0], s4[1])
 
+    def start_line(self, pos):
+        self._line_start = pos
+        self._line_active = True
+
+    def end_line(self, pos):
+        self._line_end = pos
+        self._line_active = False
+        self.draw_line()
+
+    def draw_line(self):
+        (x, y) = (self._line_start[0], self._line_start[1])
+        (p2, p2) = (px_to_cell(self._line_end[0]), px_to_cell(self._line_end[1]))
+
+        if not self.__grid.is_in_bounds([p2, p2]):
+            return
+
+        r = math.atan2((self._line_end[1] - self._line_start[1]), (self._line_end[0] - self._line_start[0]))
+        d = math.floor(math.sqrt((self._line_end[0] - self._line_start[0])**2 + (self._line_end[1] - self._line_start[1])**2))
+
+        for i in range(d):
+            x = self._line_start[0] + (i * math.cos(r))
+            y = self._line_start[1] + (i * math.sin(r))
+
+            (px, py) = (px_to_cell(x), px_to_cell(y))
+            if self.__grid.exists([px, py]) is False:
+                self.add(self.__painter.get_template_particle().clone(px, py))
+
     # For each particle, update its position. Then, apply tool if active
-    def update_particles(self, mouse):
+    def update_particles(self, mouse, sandbox, display):
         for particle in self.__particles:
             particle.update_on_tick(self, self.__grid)
 
@@ -97,7 +128,11 @@ class Driver:
                 self.__particles.remove(particle)
 
         if self._tool_use:
-            self.__painter.use_tool(mouse, self, self.__grid)
+            if self._tool == "LINE" and self._line_active:
+                line = sandbox.clipline(self._line_start[0], self._line_start[1], mouse.get_pos()[0], mouse.get_pos()[1])
+                pygame.draw.line(display, (100, 100, 100), line[0], line[1])
+            elif self._tool == "ADD" or self._tool == "DELETE":
+                self.__painter.use_tool(mouse, self, self.__grid)
 
     def get_current_element(self):
         return self.__painter.get_template_particle()
