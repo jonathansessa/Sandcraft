@@ -28,15 +28,19 @@ if __name__ == '__main__':
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if sandbox.collidepoint(pygame.mouse.get_pos()):
                     driver.set_tool_use(True)
+                    if driver.get_tool() == "LINE":
+                        driver.start_line(pygame.mouse.get_pos())
                 elif element_menu.contains(event.pos[0], event.pos[1]):
                     element_menu.update(driver, event.pos[0], event.pos[1])
                 elif tool_menu.contains(event.pos[0], event.pos[1]):
                     tool_menu.update(driver, event.pos[0], event.pos[1])
             elif event.type == pygame.MOUSEBUTTONUP:
                 driver.set_tool_use(False)
+                if driver.get_tool() == "LINE":
+                    driver.end_line(pygame.mouse.get_pos())
 
         # Update particle positions and apply tool (if is being used)
-        driver.update_particles(pygame.mouse)
+        driver.update_particles(pygame.mouse, sandbox, display)
 
         # Draw all particles in the sandbox
         driver.render(display)

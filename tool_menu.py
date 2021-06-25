@@ -8,7 +8,7 @@ class ToolMenu:
         self._y = y
         self._width = width
         self._height = 30
-        self._TOOLS = ["ADD", "DELETE", "INSPECT", "CLEAR"]
+        self._TOOLS = ["ADD", "DELETE", "LINE", "INSPECT", "CLEAR"]
         self.tool_buttons = []
         self.draw()
 
@@ -31,7 +31,7 @@ class ToolMenu:
                 for button in self.tool_buttons:
                     button.set_inactive()
                     if button.contains(x, y):
-                        if button.get_tool() in ["ADD", "DELETE", "INSPECT"]:
+                        if button.get_tool() in ["ADD", "DELETE", "LINE", "INSPECT"]:
                             button.set_active(driver)
                         elif button.get_tool() == "CLEAR":
                             driver.clear_sandbox()
