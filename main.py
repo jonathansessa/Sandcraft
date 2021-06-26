@@ -2,16 +2,21 @@ import pygame
 import sys
 import screen
 from config import *
+from start_menu import *
 from driver import Driver
 from screen import *
 
+
 if __name__ == '__main__':
     pygame.init()
+    clock = pygame.time.Clock()
+
+    # Display the start menu and store play mode
+    config.MODE = display_start_menu()
 
     # Create and define screen regions
     (display, sandbox, element_menu, tool_menu) = screen.init_screen()
 
-    clock = pygame.time.Clock()
     driver = Driver()
 
     while 1:
@@ -58,3 +63,5 @@ if __name__ == '__main__':
         screen.update_fps(display, clock)
         pygame.display.flip()
         clock.tick(FPS)
+
+
