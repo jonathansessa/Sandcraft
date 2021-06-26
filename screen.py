@@ -44,8 +44,11 @@ def in_sandbox(x, y):
 
 
 def update_fps(display, clock):
+    fps_bg = pygame.Rect(WINDOW_WIDTH - 50, WINDOW_HEIGHT - 15, 50, 15)
+    pygame.draw.rect(display, BG_COLOR, fps_bg)
+
     fps = int(clock.get_fps())
     font = pygame.font.Font("./fonts/RetroGaming.ttf", 11)
     text = font.render(f"FPS: {fps}", True, (255, 255, 255), BG_COLOR)
     text_width = text.get_rect().width
-    display.blit(text, (WINDOW_WIDTH - MARGIN - text_width, MARGIN))
+    display.blit(text, (WINDOW_WIDTH - MARGIN - text_width, WINDOW_HEIGHT - MARGIN))
