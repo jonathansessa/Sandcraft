@@ -64,7 +64,7 @@ class ToolMenu:
 
     def update_tool_size(self, driver):
         tool_size = driver.get_size()
-        font = pygame.font.Font("fonts/RetroGaming.ttf", 11)
+        font = pygame.font.Font("sandcraft/fonts/RetroGaming.ttf", 11)
         label = font.render(f"BRUSH SIZE: {tool_size} ", True, pygame.Color(255, 255, 255), config.BG_COLOR)
         self._surface.blit(label, (self._x, self._y + 70))
 
@@ -72,7 +72,7 @@ class ToolMenu:
         top = self._y + 70
         left = self._x
 
-        font = pygame.font.Font("fonts/RetroGaming.ttf", 11)
+        font = pygame.font.Font("sandcraft/fonts/RetroGaming.ttf", 11)
         label = font.render(f"BRUSH SIZE: {tool_size}", True, pygame.Color(255, 255, 255), config.BG_COLOR)
         self._surface.blit(label, (left, top))
 
@@ -101,7 +101,7 @@ class ToolMenu:
 
         # Redraws button, returns bounding Rect for refresh
         def create(self):
-            font = pygame.font.Font("fonts/RetroGaming.ttf", 11)
+            font = pygame.font.Font("sandcraft/fonts/RetroGaming.ttf", 11)
             label = font.render(self._name, True, pygame.Color(0, 0, 0))
             button = label.get_rect()
             button.update(self._x, self._y, button.width + 20, button.height + 10)

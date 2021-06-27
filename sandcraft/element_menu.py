@@ -5,7 +5,7 @@ from particle_data import ELEMENTS
 
 class ElementMenu:
     pygame.font.init()
-    FONT = pygame.font.Font("fonts/RetroGaming.ttf", 11)
+    FONT = pygame.font.Font("sandcraft/fonts/RetroGaming.ttf", 11)
     FONT_COLOR = (255, 255, 255)
     BUTTON_SIZE = 18
     MARGIN = 6
@@ -94,7 +94,7 @@ class ElementMenu:
             # If element is locked draw a black square with a question mark, otherwise draw square with element color
             if not self._unlocked:
                 pygame.draw.rect(self._surface, (0, 0, 0), button)
-                font = pygame.font.Font("fonts/RetroGaming.ttf", 11)
+                font = pygame.font.Font("sandcraft/fonts/RetroGaming.ttf", 11)
                 q_mark = font.render("?", True, pygame.Color(255, 255, 255))
                 self._surface.blit(q_mark, (self._x + 4, self._y + 1))
             else:
