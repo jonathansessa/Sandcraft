@@ -1,4 +1,3 @@
-import pygame
 import math
 
 SANDBOX_WIDTH = 800
@@ -15,7 +14,7 @@ WINDOW_HEIGHT = SANDBOX_HEIGHT + (MARGIN * 4) + math.floor(SANDBOX_HEIGHT * 0.3)
 MENU_WIDTH = 828
 MENU_HEIGHT = 828
 
-MODE = "SANDBOX"
+MODE = "A"
 
 FPS = 60
 PARTICLE_SIZE = 4

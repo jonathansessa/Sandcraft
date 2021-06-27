@@ -2,6 +2,7 @@ import pygame
 import sys
 import screen
 from config import *
+from particle_data import template_steam
 from start_menu import *
 from driver import Driver
 from screen import *
@@ -12,12 +13,15 @@ if __name__ == '__main__':
     clock = pygame.time.Clock()
 
     # Display the start menu and store play mode
-    config.MODE = display_start_menu()
+    mode = display_start_menu()
 
     # Create and define screen regions
-    (display, sandbox, element_menu, tool_menu) = screen.init_screen()
+    (display, sandbox, element_menu, tool_menu) = screen.init_screen(mode)
+    driver = Driver(mode)
 
-    driver = Driver()
+    if mode == "DISCOVERY":
+        element_menu.discovery_demo()
+        driver.undiscovered.append(template_steam)
 
     while 1:
         # (Ugly) Fix for inspect label writing outside of sandbox area
@@ -50,7 +54,7 @@ if __name__ == '__main__':
         driver.update_particles(pygame.mouse, sandbox, display)
 
         # Draw all particles in the sandbox
-        driver.render(display)
+        driver.render(display, element_menu)
 
         # Replace mouse pointer inside sandbox, otherwise show
         if sandbox.collidepoint(pygame.mouse.get_pos()):
