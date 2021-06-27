@@ -10,7 +10,8 @@ class Particle(metaclass=abc.ABCMeta):
             vel_x, vel_y,
             temp, temp_freeze, temp_boil,
             density,
-            color):
+            color,
+            name):
 
         self._col = col
         self._row = row
@@ -21,6 +22,7 @@ class Particle(metaclass=abc.ABCMeta):
         self._temp_boil = temp_boil
         self._density = density
         self._color = color
+        self._name = name
         self._is_live = True
         self._needs_update = True
 
@@ -116,3 +118,7 @@ class Particle(metaclass=abc.ABCMeta):
     @property
     def color(self):
         return self._color
+
+    @property
+    def name(self):
+        return self._name

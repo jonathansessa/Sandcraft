@@ -3,7 +3,7 @@ from element_menu import *
 from tool_menu import *
 
 
-def init_screen():
+def init_screen(mode):
     pygame.display.set_caption('Sandcraft')
     surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 
@@ -28,8 +28,8 @@ def init_screen():
     surface.blit(title_text, (MARGIN, (2*MARGIN - 22)/3))
 
     # Particles Selection
-    element_menu = ElementMenu(surface, pbar_left, pbar_top, pbar_width)
     tool_menu = ToolMenu(surface, tbar_left, tbar_top, tbar_width)
+    element_menu = ElementMenu(surface, pbar_left, pbar_top, pbar_width, mode)
 
     return [surface, sandbox, element_menu, tool_menu]
 
@@ -43,8 +43,11 @@ def in_sandbox(x, y):
 
 
 def update_fps(display, clock):
+    fps_bg = pygame.Rect(WINDOW_WIDTH - 50, WINDOW_HEIGHT - 15, 50, 15)
+    pygame.draw.rect(display, BG_COLOR, fps_bg)
+
     fps = int(clock.get_fps())
     font = pygame.font.Font("./fonts/RetroGaming.ttf", 11)
     text = font.render(f"FPS: {fps}", True, (255, 255, 255), BG_COLOR)
     text_width = text.get_rect().width
-    display.blit(text, (WINDOW_WIDTH - MARGIN - text_width, MARGIN))
+    display.blit(text, (WINDOW_WIDTH - MARGIN - text_width, WINDOW_HEIGHT - MARGIN))

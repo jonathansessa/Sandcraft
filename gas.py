@@ -11,13 +11,15 @@ class Gas(Particle):
             vel_x, vel_y,
             temp, temp_freeze, temp_boil,
             density,
-            color):
+            color,
+            name):
         super().__init__(
             col, row,
             vel_x, vel_y,
             temp, temp_freeze, temp_boil,
             density,
-            color)
+            color,
+            name)
         self._lifespan = pygame.time.get_ticks() + 3000
 
     def clone(self, col, row):
@@ -26,7 +28,8 @@ class Gas(Particle):
             self._vel_x, self._vel_y,
             self._temp, self._temp_freeze, self._temp_boil,
             self._density,
-            self._color)
+            self._color,
+            self._name)
 
     def update_on_tick(self, driver, grid):
         if pygame.time.get_ticks() > self._lifespan:
