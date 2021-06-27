@@ -20,7 +20,7 @@ def print_state_message(screen, text):
 
     # Print new message
     print_font = pygame.font.Font(FONT_PATH, 20)
-    text_rect = print_font.render(text, True, pygame.Color(255, 255, 255))
+    text_rect = print_font.render(text, False, (255, 255, 255))
     screen.blit(text_rect, text_rect.get_rect().move(
         (SANDBOX_WIDTH / 2 - text_rect.get_width() / 2, WINDOW_HEIGHT - 2 * SANDBOX_Y)))
 
@@ -203,6 +203,9 @@ class Driver:
 
             if particle.is_live is False:
                 self.__particles.remove(particle)
+
+            if particle.name == "Water Generator":
+                particle.force_update()
 
         if self._tool_use:
             if self._tool == "ADD" or self._tool == "DELETE":
