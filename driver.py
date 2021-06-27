@@ -1,22 +1,24 @@
 import pygame
 import math
-from config import PARTICLE_SIZE
+from config import PARTICLE_SIZE, SANDBOX_WIDTH, SANDBOX_HEIGHT
 from grid import Grid, px_to_cell
 from painter import Painter
 from particle_data import *
 
 
 class Driver:
-    def __init__(self):
+    def __init__(self, mode):
         self.__particles = []
         self.__grid = Grid()
         self.__painter = Painter(template_sand)
+        self._mode = mode
         self._tool = "ADD"
         self._size = 1
         self._tool_use = False
         self._shape_start = (0, 0)
         self._shape_end = (0, 0)
         self._shape_active = False
+        self.undiscovered = []
 
     """
         add adds the specified particle both the particle list and the Grid the particle into the grid.
@@ -192,6 +194,40 @@ class Driver:
     def set_current_element(self, new):
         self.__painter.set_template_particle(new)
 
-    def render(self, screen):
+    # Draws particles in sandbox, also checks for new elements in Discovery Mode
+    def render(self, screen, element_menu):
         for particle in self.__particles:
             particle.render(screen)
+
+            if self._mode == "DISCOVERY" and len(self.undiscovered) != 0:
+                if particle.name == "Steam":
+                    for e in element_menu.element_buttons:
+                        if e.get_element() == template_steam:
+                            e.unlocked = True
+                            e.update()
+                            try:
+                                self.undiscovered.remove(template_steam)
+                            except ValueError:
+                                pass
+
+                            click = False
+                            while not click:
+                                font = pygame.font.Font('fonts/RetroGaming.ttf', 30)
+                                alert = font.render("STEAM DISCOVERED!", False, (255, 255, 255))
+                                alert_rect = alert.get_rect()
+                                alert_rect.center = (SANDBOX_WIDTH / 2, SANDBOX_HEIGHT / 2)
+                                screen.blit(alert, alert_rect)
+
+                                font2 = pygame.font.Font('fonts/RetroGaming.ttf', 18)
+                                alert2 = font2.render("(Click to Continue)", False, (255, 255, 255))
+                                alert2_rect = alert2.get_rect()
+                                alert2_rect.center = (SANDBOX_WIDTH / 2, (SANDBOX_HEIGHT / 2) + 50)
+                                screen.blit(alert2, alert2_rect)
+
+                                pygame.display.update()
+
+                                for event in pygame.event.get():
+                                    if event.type == pygame.MOUSEBUTTONDOWN:
+                                        click = True
+                                    if event.type == pygame.KEYDOWN:
+                                        click = True

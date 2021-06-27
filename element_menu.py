@@ -1,4 +1,5 @@
 import pygame
+from config import MODE
 from particle_data import ELEMENTS
 
 
@@ -9,12 +10,13 @@ class ElementMenu:
     BUTTON_SIZE = 18
     MARGIN = 6
 
-    def __init__(self, surface, x, y, width):
+    def __init__(self, surface, x, y, width, mode):
         self._surface = surface
         self._x = x
         self._y = y
         self._width = width
         self._height = 300
+        self._mode = mode
         self.element_buttons = []
         self.draw()
 
@@ -36,7 +38,7 @@ class ElementMenu:
             if b.contains(x, y):
                 for button in self.element_buttons:
                     button.set_inactive()
-                    if button.contains(x, y):
+                    if button.contains(x, y) and button.unlocked:
                         button.set_active()
                         driver.set_current_element(button.get_element())
                     button.update()
@@ -56,7 +58,7 @@ class ElementMenu:
         top = y + t.get_height() + self.MARGIN/2
 
         for e in elements:
-            self.element_buttons.append(self.ElementButton(surface, left, top, self.BUTTON_SIZE, self.BUTTON_SIZE, e))
+            self.element_buttons.append(self.ElementButton(surface, left, top, self.BUTTON_SIZE, self.BUTTON_SIZE, e, self._mode))
             left += self.BUTTON_SIZE + self.MARGIN
             if left + self.BUTTON_SIZE > x + width:
                 left = x
@@ -64,10 +66,16 @@ class ElementMenu:
 
         return top + self.BUTTON_SIZE - self._y
 
+    def discovery_demo(self):
+        for button in self.element_buttons:
+            if button.get_element().name != "Steam":
+                button.unlocked = True
+                button.update()
+
     class ElementButton:
         ACTIVE_COLOR = (255, 0, 0)
 
-        def __init__(self, surface, x, y, width, height, template_particle):
+        def __init__(self, surface, x, y, width, height, template_particle, mode):
             self._surface = surface
             self._x = x
             self._y = y
@@ -76,7 +84,7 @@ class ElementMenu:
             self._particle = template_particle
             self._active = False
             self._enabled = True
-            self._unlocked = True
+            self._unlocked = (mode == "SANDBOX")
             self.update()
 
         # Redraws button based on particle and if unlocked/enabled/active
@@ -116,11 +124,21 @@ class ElementMenu:
         def set_inactive(self):
             self._active = False
 
-        def set_enabled(self):
-            self._enabled = True
+        def get_enabled(self):
+            return self._enabled
 
-        def set_disabled(self):
-            self._enabled = False
+        def set_enabled(self, status):
+            self._enabled = status
+
+        enabled = property(get_enabled, set_enabled)
+
+        def get_lock(self):
+            return self._unlocked
+
+        def set_lock(self, status):
+            self._unlocked = status
+
+        unlocked = property(get_lock, set_lock)
 
         def contains(self, x, y):
             if x < self._x or self._x + self._width < x:

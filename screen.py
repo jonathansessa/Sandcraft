@@ -3,7 +3,7 @@ from element_menu import *
 from tool_menu import *
 
 
-def init_screen():
+def init_screen(mode):
     pygame.display.set_caption('Sandcraft')
     surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 
@@ -29,8 +29,7 @@ def init_screen():
 
     # Particles Selection
     tool_menu = ToolMenu(surface, tbar_left, tbar_top, tbar_width)
-    element_menu = ElementMenu(surface, pbar_left, pbar_top, pbar_width)
-
+    element_menu = ElementMenu(surface, pbar_left, pbar_top, pbar_width, mode)
 
     return [surface, sandbox, element_menu, tool_menu]
 
