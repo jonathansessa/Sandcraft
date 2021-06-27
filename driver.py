@@ -3,15 +3,30 @@ import time
 import pickle
 import pygame
 import math
-from config import PARTICLE_SIZE, SANDBOX_WIDTH, SANDBOX_HEIGHT, WINDOW_HEIGHT, SANDBOX_Y
+from config import PARTICLE_SIZE, SANDBOX_WIDTH, SANDBOX_HEIGHT, WINDOW_HEIGHT, SANDBOX_Y, BG_COLOR
 from grid import Grid, px_to_cell
 from painter import Painter
 from particle_data import *
 from particle import Particle
+from gas import Gas
+
+
+def print_state_message(screen, text):
+    # Clear previous message
+    clear_surf = pygame.Surface((SANDBOX_WIDTH, (WINDOW_HEIGHT - SANDBOX_HEIGHT) / 2))
+    clear_surf.fill(BG_COLOR)
+    screen.blit(clear_surf, clear_surf.get_rect().move(
+        (SANDBOX_WIDTH / 2 - clear_surf.get_width() / 2, WINDOW_HEIGHT - 2 * SANDBOX_Y)))
+
+    # Print new message
+    print_font = pygame.font.Font("fonts/RetroGaming.ttf", 20)
+    text_rect = print_font.render(text, True, pygame.Color(255, 255, 255))
+    screen.blit(text_rect, text_rect.get_rect().move(
+        (SANDBOX_WIDTH / 2 - text_rect.get_width() / 2, WINDOW_HEIGHT - 2 * SANDBOX_Y)))
 
 
 class Driver:
-    def __init__(self, mode):
+    def __init__(self, mode, element_menu):
         self.__particles = []
         self.__grid = Grid()
         self.__painter = Painter(template_sand)
@@ -23,6 +38,7 @@ class Driver:
         self._shape_end = (0, 0)
         self._shape_active = False
         self.undiscovered = []
+        self.__element_menu = element_menu
 
     """
         add adds the specified particle both the particle list and the Grid the particle into the grid.
@@ -199,20 +215,23 @@ class Driver:
         self.__painter.set_template_particle(new)
 
     # Draws particles in sandbox, also checks for new elements in Discovery Mode
-    def render(self, screen, element_menu):
+    def render(self, screen):
         for particle in self.__particles:
             particle.render(screen)
 
             if self._mode == "DISCOVERY" and len(self.undiscovered) != 0:
                 if particle.name == "Steam":
-                    for e in element_menu.element_buttons:
+                    for e in self.__element_menu.element_buttons:
                         if e.get_element() == template_steam:
                             e.unlocked = True
                             e.update()
                             try:
-                                self.undiscovered.remove(template_steam)
+                                for elem in self.undiscovered:
+                                    if elem.name == "Steam":
+                                        self.undiscovered.remove(elem)
+                                # self.undiscovered.remove(template_steam)
                             except ValueError:
-                                pass
+                                continue
 
                             click = False
                             while not click:
@@ -239,42 +258,55 @@ class Driver:
     def save_state(self, screen):
         os.makedirs(os.path.dirname('./data/'), exist_ok=True)
         curr = time.time()
-        with open('data/sc_state_%d.pickle' % curr, 'wb') as file:
-            pickle.dump(self.__particles, file)
-        self.print_message(screen, 'Saved!')
+        for particle in self.__particles:
+            if isinstance(particle, Gas):
+                particle.save_lifespan()
+        data = {
+            'particles': self.__particles,
+            'undiscovered': self.undiscovered
+        }
+        with open('data/sc_state_%s_%d.pickle' % (self._mode, curr), 'wb') as file:
+            pickle.dump(data, file)
+        print_state_message(screen, 'Saved!')
 
     def load_state(self, screen):
         if os.path.exists('./data/'):
-            self.print_message(screen, 'Loading...')
+            print_state_message(screen, 'Loading...')
             recent = 0
             for filename in os.listdir('./data/'):
                 f = os.path.join('data', filename)
-                if os.path.isfile(f) and filename.split('.')[-1] == 'pickle':  # check for pickle file
+                if os.path.isfile(f) and filename.split('.')[-1] == 'pickle'\
+                        and filename.split('.')[-2].split('_')[-2] == self._mode:  # check for pickle file
                     try:
                         timestamp = int(filename.split('.')[-2].split('_')[-1])
                         recent = timestamp if timestamp > recent else recent  # grab most recent file
                     except ValueError or IndexError:
                         continue
             if recent != 0:
-                with open('data/sc_state_%d.pickle' % recent, 'rb') as file:
-                    particles = pickle.load(file)
+                with open('data/sc_state_%s_%d.pickle' % (self._mode, recent), 'rb') as file:
                     try:
+                        data = pickle.load(file)
                         self.clear_sandbox()
-                        for particle in particles:
+                        for particle in data['particles']:
                             if isinstance(particle, Particle):
+                                if isinstance(particle, Gas):
+                                    particle.load_lifespan()
                                 self.add(particle)
                             else:
                                 raise ValueError
-                        self.print_message(screen, 'Success: Loaded!')
-                    except ValueError:
-                        self.print_message(screen, 'Error: Invalid file data!')
+                        if self._mode == "DISCOVERY":
+                            self.undiscovered = data['undiscovered']
+                            for e in self.__element_menu.element_buttons:
+                                if e.get_element().name in [element.name for element in self.undiscovered]:
+                                    e.unlocked = False
+                                else:
+                                    e.unlocked = True
+                                e.update()
+                        print_state_message(screen, 'Success: Loaded!')
+                    except:
+                        print_state_message(
+                            screen, 'Error: sc_state_%s_%d contains invalid data!' % (self._mode, recent))
             else:
-                self.print_message(screen, 'Error: No state files detected!')
+                print_state_message(screen, 'Error: No state files detected!')
         else:
-            self.print_message(screen, 'Error: Data directory does not exist!')
-
-    def print_message(self, screen, text):
-        print_font = pygame.font.Font("fonts/RetroGaming.ttf", 22)
-        text_rect = print_font.render(text, True, pygame.Color(255, 255, 255))
-        screen.blit(text_rect, text_rect.get_rect().move(
-            (SANDBOX_WIDTH / 2 - text_rect.get_width() / 2, WINDOW_HEIGHT - SANDBOX_Y)))
+            print_state_message(screen, 'Error: Data directory does not exist!')

@@ -17,7 +17,7 @@ if __name__ == '__main__':
 
     # Create and define screen regions
     (display, sandbox, element_menu, tool_menu) = screen.init_screen(mode)
-    driver = Driver(mode)
+    driver = Driver(mode, element_menu)
 
     if mode == "DISCOVERY":
         element_menu.discovery_demo()
@@ -54,7 +54,7 @@ if __name__ == '__main__':
         driver.update_particles(pygame.mouse, sandbox, display)
 
         # Draw all particles in the sandbox
-        driver.render(display, element_menu)
+        driver.render(display)
 
         # Replace mouse pointer inside sandbox, otherwise show
         if sandbox.collidepoint(pygame.mouse.get_pos()):
@@ -67,5 +67,3 @@ if __name__ == '__main__':
         screen.update_fps(display, clock)
         pygame.display.flip()
         clock.tick(FPS)
-
-
