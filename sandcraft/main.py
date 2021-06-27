@@ -1,7 +1,4 @@
-import pygame
-import sys
 import screen
-from config import *
 from particle_data import template_steam
 from start_menu import *
 from driver import Driver
