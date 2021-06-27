@@ -56,10 +56,19 @@ template_metal = Fixed(
                     (192, 192, 192),        # color
                     "Metal")                # name
 
+template_generator = Fixed(
+                    0, 0,                   # position
+                    0, 0,                   # velocity
+                    20, -100, 1000,         # temperature
+                    15.0,                   # density
+                    (0, 153, 153),          # color
+                    "Water Generator")      # name
+
 # Particle dictionary used to create particle selection tool
 ELEMENTS = {
     "FIXED": [template_wood, template_metal],
     "SOLIDS": [template_sand],
     "LIQUIDS": [template_water, template_lava],
-    "GASES": [template_steam]
+    "GASES": [template_steam],
+    "SPECIAL": [template_generator]
 }

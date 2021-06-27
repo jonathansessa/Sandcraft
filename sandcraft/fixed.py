@@ -29,6 +29,10 @@ class Fixed(Particle):
             self._name)
 
     def update_on_tick(self, driver, grid):
+        if self.name == "Water Generator":
+            if not grid.exists((self.col+1, self.row)):
+                driver.add(particle_data.template_water.clone(self.col+1, self.row))
+
         if self._needs_update is False:
             return
 

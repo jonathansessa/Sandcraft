@@ -30,7 +30,7 @@ class ElementMenu:
             sect_x += sect_w + self.MARGIN
             if sect_x >= self._x + self._width:
                 sect_x = self._x
-                sect_y += sect_h + 2 * self.MARGIN
+                sect_y += 50
 
     # First checks if a button was clicked, then changes corresponding button to active
     def update(self, driver, x, y):
@@ -95,7 +95,7 @@ class ElementMenu:
             if not self._unlocked:
                 pygame.draw.rect(self._surface, (0, 0, 0), button)
                 font = pygame.font.Font(FONT_PATH, 11)
-                q_mark = font.render("?", True, pygame.Color(255, 255, 255))
+                q_mark = font.render("?", False, (255, 255, 255))
                 self._surface.blit(q_mark, (self._x + 4, self._y + 1))
             else:
                 pygame.draw.rect(self._surface, self._particle.color, button)
