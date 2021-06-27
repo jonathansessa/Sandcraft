@@ -1,5 +1,5 @@
 import pygame
-import config
+from config import *
 
 
 class ToolMenu:
@@ -21,7 +21,7 @@ class ToolMenu:
 
             # If new button is outside of tool menu
             if button_x + new_button.get_width() > self._x + self._width:
-                pygame.draw.rect(self._surface, config.BG_COLOR,
+                pygame.draw.rect(self._surface, BG_COLOR,
                                  pygame.Rect(button_x, button_y, new_button.get_width(), new_button.get_height()))
                 button_x = self._x
                 button_y = self._y + new_button.get_height() + 10
@@ -64,16 +64,16 @@ class ToolMenu:
 
     def update_tool_size(self, driver):
         tool_size = driver.get_size()
-        font = pygame.font.Font("sandcraft/fonts/RetroGaming.ttf", 11)
-        label = font.render(f"BRUSH SIZE: {tool_size} ", True, pygame.Color(255, 255, 255), config.BG_COLOR)
+        font = pygame.font.Font(FONT_PATH, 11)
+        label = font.render(f"BRUSH SIZE: {tool_size} ", True, pygame.Color(255, 255, 255), BG_COLOR)
         self._surface.blit(label, (self._x, self._y + 70))
 
     def draw_adjustment(self, tool_size):
         top = self._y + 70
         left = self._x
 
-        font = pygame.font.Font("sandcraft/fonts/RetroGaming.ttf", 11)
-        label = font.render(f"BRUSH SIZE: {tool_size}", True, pygame.Color(255, 255, 255), config.BG_COLOR)
+        font = pygame.font.Font(FONT_PATH, 11)
+        label = font.render(f"BRUSH SIZE: {tool_size}", True, pygame.Color(255, 255, 255), BG_COLOR)
         self._surface.blit(label, (left, top))
 
         top += 20
@@ -101,7 +101,7 @@ class ToolMenu:
 
         # Redraws button, returns bounding Rect for refresh
         def create(self):
-            font = pygame.font.Font("sandcraft/fonts/RetroGaming.ttf", 11)
+            font = pygame.font.Font(FONT_PATH, 11)
             label = font.render(self._name, True, pygame.Color(0, 0, 0))
             button = label.get_rect()
             button.update(self._x, self._y, button.width + 20, button.height + 10)

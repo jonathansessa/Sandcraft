@@ -19,6 +19,7 @@ MODE = "A"
 FPS = 60
 PARTICLE_SIZE = 4
 
+FONT_PATH = "fonts/RetroGaming.ttf"
 FONT_COLOR = (255, 255, 255)
 
 BG_COLOR = (33, 33, 33)

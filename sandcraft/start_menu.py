@@ -9,7 +9,7 @@ def create_menu_button(menu, text, y):
     pygame.draw.rect(menu, (180, 180, 180), button)
     pygame.draw.rect(menu, (255, 255, 255), button, 1)
 
-    font = pygame.font.Font("sandcraft/fonts/RetroGaming.ttf", 36)
+    font = pygame.font.Font(FONT_PATH, 36)
     label = font.render(text, False, (0, 0, 0))
     menu.blit(label, (button.x + ((button.width-label.get_width()) / 2), button.y))
 
@@ -22,7 +22,7 @@ def display_start_menu():
 
     menu.fill(BG_COLOR)
 
-    title_font = pygame.font.Font('sandcraft/fonts/RetroGaming.ttf', 60)
+    title_font = pygame.font.Font(FONT_PATH, 60)
     title = title_font.render("SANDCRAFT", False, (255, 255, 255))
     title_rect = title.get_rect()
     title_rect.center = (MENU_WIDTH/2, MENU_HEIGHT/3)

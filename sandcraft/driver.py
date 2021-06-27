@@ -3,7 +3,7 @@ import time
 import pickle
 import pygame
 import math
-from config import PARTICLE_SIZE, SANDBOX_WIDTH, SANDBOX_HEIGHT, WINDOW_HEIGHT, SANDBOX_Y, BG_COLOR
+from config import *
 from grid import Grid, px_to_cell
 from painter import Painter
 from particle_data import *
@@ -19,7 +19,7 @@ def print_state_message(screen, text):
         (SANDBOX_WIDTH / 2 - clear_surf.get_width() / 2, WINDOW_HEIGHT - 2 * SANDBOX_Y)))
 
     # Print new message
-    print_font = pygame.font.Font("sandcraft/fonts/RetroGaming.ttf", 20)
+    print_font = pygame.font.Font(FONT_PATH, 20)
     text_rect = print_font.render(text, True, pygame.Color(255, 255, 255))
     screen.blit(text_rect, text_rect.get_rect().move(
         (SANDBOX_WIDTH / 2 - text_rect.get_width() / 2, WINDOW_HEIGHT - 2 * SANDBOX_Y)))
@@ -112,7 +112,7 @@ class Driver:
                 x = px_to_cell(pos[0])
                 y = px_to_cell(pos[1])
 
-                font = pygame.font.Font("sandcraft/fonts/RetroGaming.ttf", 11)
+                font = pygame.font.Font(FONT_PATH, 11)
                 if self.__grid.exists((x, y)):
                     current = self.__grid.get((x, y))
                     label = font.render(f"{current.name}: {x}, {y}", True, (255, 255, 255), (0, 0, 0))
@@ -235,13 +235,13 @@ class Driver:
 
                             click = False
                             while not click:
-                                font = pygame.font.Font('sandcraft/fonts/RetroGaming.ttf', 30)
+                                font = pygame.font.Font(FONT_PATH, 30)
                                 alert = font.render("STEAM DISCOVERED!", False, (255, 255, 255))
                                 alert_rect = alert.get_rect()
                                 alert_rect.center = (SANDBOX_WIDTH / 2, SANDBOX_HEIGHT / 2)
                                 screen.blit(alert, alert_rect)
 
-                                font2 = pygame.font.Font('sandcraft/fonts/RetroGaming.ttf', 18)
+                                font2 = pygame.font.Font(FONT_PATH, 18)
                                 alert2 = font2.render("(Click to Continue)", False, (255, 255, 255))
                                 alert2_rect = alert2.get_rect()
                                 alert2_rect.center = (SANDBOX_WIDTH / 2, (SANDBOX_HEIGHT / 2) + 50)
