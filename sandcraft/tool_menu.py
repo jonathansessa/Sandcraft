@@ -9,7 +9,7 @@ class ToolMenu:
         self._y = y
         self._width = width
         self._height = 100
-        self._TOOLS = ["ADD", "DELETE", "LINE", "RECT", "INSPECT", "CLEAR"]
+        self._TOOLS = ["ADD", "DELETE", "LINE", "RECT", "INSPECT", "CLEAR", "SAVE", "LOAD"]
         self.tool_buttons = []
         self.draw()
 
@@ -43,6 +43,10 @@ class ToolMenu:
                             button.set_active(driver)
                         elif button.get_tool() == "CLEAR":
                             driver.clear_sandbox()
+                        elif button.get_tool() == "SAVE":
+                            driver.save_state(self._surface)
+                        elif button.get_tool() == "LOAD":
+                            driver.load_state(self._surface)
                         elif button.get_tool() == "-":
                             driver.set_size(-1)
                             self.update_tool_size(driver)

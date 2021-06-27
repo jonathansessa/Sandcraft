@@ -21,6 +21,7 @@ class Gas(Particle):
             color,
             name)
         self._lifespan = pygame.time.get_ticks() + 3000
+        self._remaining = 3000
 
     def clone(self, col, row):
         return Gas(
@@ -96,3 +97,9 @@ class Gas(Particle):
                         grid.swap(pos, next_pos)
         else:
             self._needs_update = False
+
+    def save_lifespan(self):
+        self._remaining = self._lifespan - pygame.time.get_ticks()
+
+    def load_lifespan(self):
+        self._lifespan = pygame.time.get_ticks() + self._remaining
