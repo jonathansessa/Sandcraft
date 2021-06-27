@@ -1,4 +1,5 @@
 import pygame
+import sys
 from config import *
 
 
@@ -9,7 +10,7 @@ class ToolMenu:
         self._y = y
         self._width = width
         self._height = 100
-        self._TOOLS = ["ADD", "DELETE", "LINE", "RECT", "INSPECT", "CLEAR", "SAVE", "LOAD"]
+        self._TOOLS = ["ADD", "DELETE", "LINE", "RECT", "INSPECT", "CLEAR", "SAVE", "LOAD", "QUIT"]
         self.tool_buttons = []
         self.draw()
 
@@ -47,6 +48,9 @@ class ToolMenu:
                             driver.save_state(self._surface)
                         elif button.get_tool() == "LOAD":
                             driver.load_state(self._surface)
+                        elif button.get_tool() == "QUIT":
+                            pygame.quit()
+                            sys.exit()
                         elif button.get_tool() == "-":
                             driver.set_size(-1)
                             self.update_tool_size(driver)
