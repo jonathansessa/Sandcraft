@@ -19,7 +19,7 @@ def print_state_message(screen, text):
         (SANDBOX_WIDTH / 2 - clear_surf.get_width() / 2, WINDOW_HEIGHT - 2 * SANDBOX_Y)))
 
     # Print new message
-    print_font = pygame.font.Font("fonts/RetroGaming.ttf", 20)
+    print_font = pygame.font.Font("sandcraft/fonts/RetroGaming.ttf", 20)
     text_rect = print_font.render(text, True, pygame.Color(255, 255, 255))
     screen.blit(text_rect, text_rect.get_rect().move(
         (SANDBOX_WIDTH / 2 - text_rect.get_width() / 2, WINDOW_HEIGHT - 2 * SANDBOX_Y)))
