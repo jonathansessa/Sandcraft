@@ -92,7 +92,7 @@ class Driver:
                 x = px_to_cell(pos[0])
                 y = px_to_cell(pos[1])
 
-                font = pygame.font.Font("fonts/RetroGaming.ttf", 11)
+                font = pygame.font.Font("sandcraft/fonts/RetroGaming.ttf", 11)
                 if self.__grid.exists((x, y)):
                     current = self.__grid.get((x, y))
                     label = font.render(f"{current.name}: {x}, {y}", True, (255, 255, 255), (0, 0, 0))
@@ -212,13 +212,13 @@ class Driver:
 
                             click = False
                             while not click:
-                                font = pygame.font.Font('fonts/RetroGaming.ttf', 30)
+                                font = pygame.font.Font('sandcraft/fonts/RetroGaming.ttf', 30)
                                 alert = font.render("STEAM DISCOVERED!", False, (255, 255, 255))
                                 alert_rect = alert.get_rect()
                                 alert_rect.center = (SANDBOX_WIDTH / 2, SANDBOX_HEIGHT / 2)
                                 screen.blit(alert, alert_rect)
 
-                                font2 = pygame.font.Font('fonts/RetroGaming.ttf', 18)
+                                font2 = pygame.font.Font('sandcraft/fonts/RetroGaming.ttf', 18)
                                 alert2 = font2.render("(Click to Continue)", False, (255, 255, 255))
                                 alert2_rect = alert2.get_rect()
                                 alert2_rect.center = (SANDBOX_WIDTH / 2, (SANDBOX_HEIGHT / 2) + 50)

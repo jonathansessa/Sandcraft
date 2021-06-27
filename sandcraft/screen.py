@@ -23,7 +23,7 @@ def init_screen(mode):
     surface.fill(SANDBOX_COLOR, sandbox)
 
     # Top Menu Bar
-    title_font = pygame.font.Font("fonts/RetroGaming.ttf", 22)
+    title_font = pygame.font.Font("sandcraft/fonts/RetroGaming.ttf", 22)
     title_text = title_font.render("SANDCRAFT", True, pygame.Color(255, 255, 255))
     surface.blit(title_text, (MARGIN, (2*MARGIN - 22)/3))
 
@@ -47,7 +47,7 @@ def update_fps(display, clock):
     pygame.draw.rect(display, BG_COLOR, fps_bg)
 
     fps = int(clock.get_fps())
-    font = pygame.font.Font("./fonts/RetroGaming.ttf", 11)
+    font = pygame.font.Font("sandcraft/fonts/RetroGaming.ttf", 11)
     text = font.render(f"FPS: {fps}", True, (255, 255, 255), BG_COLOR)
     text_width = text.get_rect().width
     display.blit(text, (WINDOW_WIDTH - MARGIN - text_width, WINDOW_HEIGHT - MARGIN))
