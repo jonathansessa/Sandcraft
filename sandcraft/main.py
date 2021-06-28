@@ -1,11 +1,10 @@
-import screen
-from particle_data import template_steam
-from start_menu import *
-from driver import Driver
-from screen import *
+from . import screen
+from .particle_data import template_steam
+from .start_menu import *
+from .driver import Driver
 
 
-if __name__ == '__main__':
+def main():
     pygame.init()
     clock = pygame.time.Clock()
 
@@ -64,3 +63,6 @@ if __name__ == '__main__':
         screen.update_fps(display, clock)
         pygame.display.flip()
         clock.tick(FPS)
+
+if __name__ == '__main__':
+    main()

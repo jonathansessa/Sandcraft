@@ -3,12 +3,12 @@ import time
 import pickle
 import pygame
 import math
-from config import *
-from grid import Grid, px_to_cell
-from painter import Painter
-from particle_data import *
-from particle import Particle
-from gas import Gas
+from .config import *
+from .grid import Grid, px_to_cell
+from .painter import Painter
+from .particle_data import *
+from .particle import Particle
+from .gas import Gas
 
 
 def print_state_message(screen, text):

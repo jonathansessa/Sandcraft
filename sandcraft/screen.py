@@ -1,6 +1,6 @@
-from config import *
-from element_menu import *
-from tool_menu import *
+from .config import *
+from .element_menu import *
+from .tool_menu import *
 
 
 def init_screen(mode):

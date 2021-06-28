@@ -1,7 +1,7 @@
-from solid import Solid
-from liquid import Liquid
-from gas import Gas
-from fixed import Fixed
+from .solid import Solid
+from .liquid import Liquid
+from .gas import Gas
+from .fixed import Fixed
 
 
 """
