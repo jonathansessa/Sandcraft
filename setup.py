@@ -1,5 +1,4 @@
 from setuptools import setup
-from cx_Freeze import setup, Executable
 
 setup(
     name="sandcraft",
@@ -12,7 +11,6 @@ setup(
     description="Particle physics sandbox game",
     include_package_data=True,
     install_requires=["pygame>=2.0", "cx_Freeze>=6.4",],
-    executables=[Executable("sandcraft/main.py")],
     entry_points=
     {
         "console_scripts":
