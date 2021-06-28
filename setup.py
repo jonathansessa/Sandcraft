@@ -10,7 +10,7 @@ setup(
     license="MIT",
     description="Particle physics sandbox game",
     include_package_data=True,
-    install_requires=["pygame>=2.0", "cx_Freeze>=6.4",],
+    install_requires=["pygame>=2.0",],
     entry_points=
     {
         "console_scripts":
