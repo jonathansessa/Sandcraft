@@ -4,8 +4,8 @@ Sandcraft is a 2D physics-based, particle simulator game where players can inter
 ## Installation
 To play Sandcraft:
 1. Download and unzip the GitHub repository to a local directory
-2. Within the directory run `pip3 install .`
-3. After installing the `sandcraft` package, type `play-sandcraft` to run
+2. Within the directory run `pip3 install .` to install the `sandcraft` package
+3. From the command line, type `play-sandcraft` to run
 
 ## Links
 GitHub: https://github.com/jonathansessa/Sandcraft  
