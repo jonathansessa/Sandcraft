@@ -1,5 +1,5 @@
 # Sandcraft
-Sandcraft is a 2D physics-based, particle simulator game where players can freely interact with different elements to create fun and interesting combinations and results!
+Sandcraft is a 2D physics-based, particle simulator game where players can interact with different elements to create fun combinations and results!
 
 ## Installation
 To play Sandcraft:
