@@ -1,6 +1,6 @@
 import pygame
-from config import FONT_PATH
-from particle_data import ELEMENTS
+from .config import FONT_PATH
+from .particle_data import ELEMENTS
 
 
 class ElementMenu:

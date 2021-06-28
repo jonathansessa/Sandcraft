@@ -1,4 +1,5 @@
 import math
+import os
 
 SANDBOX_WIDTH = 800
 SANDBOX_HEIGHT = 600
@@ -19,7 +20,7 @@ MODE = "A"
 FPS = 60
 PARTICLE_SIZE = 4
 
-FONT_PATH = "fonts/RetroGaming.ttf"
+FONT_PATH = os.path.join(os.path.dirname(__file__), 'fonts', 'RetroGaming.ttf')  # "fonts/RetroGaming.ttf"
 FONT_COLOR = (255, 255, 255)
 
 BG_COLOR = (33, 33, 33)
