@@ -29,9 +29,11 @@ def display_start_menu():
     menu.blit(title, title_rect)
 
     y = math.floor((1/2) * MENU_HEIGHT)
+    increment = 60
     sandbox_button = create_menu_button(menu, "SANDBOX MODE", y)
-    discovery_button = create_menu_button(menu, "DISCOVERY MODE", y + 60)
-    quit_button = create_menu_button(menu, "QUIT GAME", y + 120)
+    discovery_button = create_menu_button(menu, "DISCOVERY MODE", y + increment)
+    load_button = create_menu_button(menu, "LOAD", y + 2 * increment)
+    quit_button = create_menu_button(menu, "QUIT GAME", y + 3 * increment)
 
     while 1:
         for event in pygame.event.get():
@@ -43,6 +45,8 @@ def display_start_menu():
                     return "SANDBOX"
                 elif discovery_button.collidepoint(pygame.mouse.get_pos()):
                     return "DISCOVERY"
+                elif load_button.collidepoint(pygame.mouse.get_pos()):
+                    return "LOAD"
                 elif quit_button.collidepoint(pygame.mouse.get_pos()):
                     pygame.quit()
                     sys.exit()

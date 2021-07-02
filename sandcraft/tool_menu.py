@@ -45,9 +45,9 @@ class ToolMenu:
                         elif button.get_tool() == "CLEAR":
                             driver.clear_sandbox()
                         elif button.get_tool() == "SAVE":
-                            driver.save_state(self._surface)
+                            driver.save_state()
                         elif button.get_tool() == "LOAD":
-                            driver.load_state(self._surface)
+                            driver.load_state()
                         elif button.get_tool() == "QUIT":
                             pygame.quit()
                             sys.exit()

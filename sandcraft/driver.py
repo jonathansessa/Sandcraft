@@ -27,7 +27,7 @@ def print_state_message(screen, text):
 
 
 class Driver:
-    def __init__(self, mode, element_menu):
+    def __init__(self, mode, element_menu, display):
         self.__particles = []
         self.__grid = Grid()
         self.__painter = Painter(template_sand)
@@ -40,9 +40,14 @@ class Driver:
         self._shape_active = False
         self.undiscovered = []
         self.__element_menu = element_menu
+        self.__display = display
 
+        # Initializes and clears Tkinter window, allows for filedialog
         root = tk.Tk()
         root.withdraw()
+
+        if mode == 'LOAD':
+            self.load_state()
 
     """
         add adds the specified particle both the particle list and the Grid the particle into the grid.
@@ -262,13 +267,14 @@ class Driver:
                                     if event.type == pygame.KEYDOWN:
                                         click = True
 
-    def save_state(self, screen):
+    def save_state(self):
         for particle in self.__particles:
             if isinstance(particle, Gas):
                 particle.save_lifespan()
         data = {
             'particles': self.__particles,
-            'undiscovered': self.undiscovered
+            'undiscovered': self.undiscovered,
+            'mode': self._mode
         }
         file_path = filedialog.asksaveasfilename(defaultextension='.pickle',
                                                  filetypes=[('Pickle Files', '*.pickle')])
@@ -276,9 +282,9 @@ class Driver:
             return
         with open(file_path, 'wb') as file:
             pickle.dump(data, file)
-        print_state_message(screen, 'Saved!')
+        print_state_message(self.__display, 'Saved!')
 
-    def load_state(self, screen):
+    def load_state(self):
         file_path = filedialog.askopenfilename(title='Select a File',
                                                filetypes=[('Pickle Files', '*.pickle')])
         if file_path == '':  # if cancel button clicked
@@ -287,6 +293,7 @@ class Driver:
             try:
                 data = pickle.load(file)
                 self.clear_sandbox()
+
                 for particle in data['particles']:
                     if isinstance(particle, Particle):
                         if isinstance(particle, Gas):
@@ -294,14 +301,23 @@ class Driver:
                         self.add(particle)
                     else:
                         raise ValueError
-                if self._mode == "DISCOVERY":
+
+                if data['mode'] not in ["DISCOVERY", "SANDBOX"]:
+                    raise ValueError
+                elif data['mode'] == "DISCOVERY":
                     self.undiscovered = data['undiscovered']
-                    for e in self.__element_menu.element_buttons:
-                        if e.get_element().name in [element.name for element in self.undiscovered]:
-                            e.unlocked = False
-                        else:
-                            e.unlocked = True
-                        e.update()
-                print_state_message(screen, 'Success: Loaded!')
+                else:
+                    self.undiscovered = []
+
+                for e in self.__element_menu.element_buttons:
+                    if e.get_element().name in [element.name for element in self.undiscovered]:
+                        e.unlocked = False
+                    else:
+                        e.unlocked = True
+                    e.update()
+
+                self._mode = data['mode']
+
+                print_state_message(self.__display, 'Success: Loaded!')
             except:
-                print_state_message(screen, 'Error: %s invalid!' % os.path.basename(file_path))
+                print_state_message(self.__display, 'Error: %s has invalid data!' % os.path.basename(file_path))
