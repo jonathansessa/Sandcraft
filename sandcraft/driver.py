@@ -1,8 +1,9 @@
 import os
-import time
 import pickle
 import pygame
 import math
+import tkinter as tk
+from tkinter import filedialog
 from .config import *
 from .grid import Grid, px_to_cell
 from .painter import Painter
@@ -39,6 +40,9 @@ class Driver:
         self._shape_active = False
         self.undiscovered = []
         self.__element_menu = element_menu
+
+        root = tk.Tk()
+        root.withdraw()
 
     """
         add adds the specified particle both the particle list and the Grid the particle into the grid.
@@ -259,8 +263,6 @@ class Driver:
                                         click = True
 
     def save_state(self, screen):
-        os.makedirs(os.path.dirname('./data/'), exist_ok=True)
-        curr = time.time()
         for particle in self.__particles:
             if isinstance(particle, Gas):
                 particle.save_lifespan()
@@ -268,48 +270,38 @@ class Driver:
             'particles': self.__particles,
             'undiscovered': self.undiscovered
         }
-        with open('data/sc_state_%s_%d.pickle' % (self._mode, curr), 'wb') as file:
+        file_path = filedialog.asksaveasfilename(defaultextension='.pickle',
+                                                 filetypes=[('Pickle Files', '*.pickle')])
+        if file_path == '':  # if cancel button clicked
+            return
+        with open(file_path, 'wb') as file:
             pickle.dump(data, file)
         print_state_message(screen, 'Saved!')
 
     def load_state(self, screen):
-        if os.path.exists('./data/'):
-            print_state_message(screen, 'Loading...')
-            recent = 0
-            for filename in os.listdir('./data/'):
-                f = os.path.join('data', filename)
-                if os.path.isfile(f) and filename.split('.')[-1] == 'pickle'\
-                        and filename.split('.')[-2].split('_')[-2] == self._mode:  # check for pickle file
-                    try:
-                        timestamp = int(filename.split('.')[-2].split('_')[-1])
-                        recent = timestamp if timestamp > recent else recent  # grab most recent file
-                    except ValueError or IndexError:
-                        continue
-            if recent != 0:
-                with open('data/sc_state_%s_%d.pickle' % (self._mode, recent), 'rb') as file:
-                    try:
-                        data = pickle.load(file)
-                        self.clear_sandbox()
-                        for particle in data['particles']:
-                            if isinstance(particle, Particle):
-                                if isinstance(particle, Gas):
-                                    particle.load_lifespan()
-                                self.add(particle)
-                            else:
-                                raise ValueError
-                        if self._mode == "DISCOVERY":
-                            self.undiscovered = data['undiscovered']
-                            for e in self.__element_menu.element_buttons:
-                                if e.get_element().name in [element.name for element in self.undiscovered]:
-                                    e.unlocked = False
-                                else:
-                                    e.unlocked = True
-                                e.update()
-                        print_state_message(screen, 'Success: Loaded!')
-                    except:
-                        print_state_message(
-                            screen, 'Error: sc_state_%s_%d contains invalid data!' % (self._mode, recent))
-            else:
-                print_state_message(screen, 'Error: No state files detected!')
-        else:
-            print_state_message(screen, 'Error: Data directory does not exist!')
+        file_path = filedialog.askopenfilename(title='Select a File',
+                                               filetypes=[('Pickle Files', '*.pickle')])
+        if file_path == '':  # if cancel button clicked
+            return
+        with open(file_path, 'rb') as file:
+            try:
+                data = pickle.load(file)
+                self.clear_sandbox()
+                for particle in data['particles']:
+                    if isinstance(particle, Particle):
+                        if isinstance(particle, Gas):
+                            particle.load_lifespan()
+                        self.add(particle)
+                    else:
+                        raise ValueError
+                if self._mode == "DISCOVERY":
+                    self.undiscovered = data['undiscovered']
+                    for e in self.__element_menu.element_buttons:
+                        if e.get_element().name in [element.name for element in self.undiscovered]:
+                            e.unlocked = False
+                        else:
+                            e.unlocked = True
+                        e.update()
+                print_state_message(screen, 'Success: Loaded!')
+            except:
+                print_state_message(screen, 'Error: %s invalid!' % os.path.basename(file_path))
