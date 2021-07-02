@@ -13,7 +13,7 @@ def main():
 
     # Create and define screen regions
     (display, sandbox, element_menu, tool_menu) = screen.init_screen(mode)
-    driver = Driver(mode, element_menu)
+    driver = Driver(mode, element_menu, display)
 
     if mode == "DISCOVERY":
         element_menu.discovery_demo()
