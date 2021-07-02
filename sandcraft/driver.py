@@ -302,9 +302,9 @@ class Driver:
                     else:
                         raise ValueError
 
-                if data.mode not in ["DISCOVERY", "SANDBOX"]:
+                if data['mode'] not in ["DISCOVERY", "SANDBOX"]:
                     raise ValueError
-                elif data.mode == "DISCOVERY":
+                elif data['mode'] == "DISCOVERY":
                     self.undiscovered = data['undiscovered']
                 else:
                     self.undiscovered = []
@@ -316,8 +316,8 @@ class Driver:
                         e.unlocked = True
                     e.update()
 
-                self._mode = data.mode
+                self._mode = data['mode']
 
                 print_state_message(self.__display, 'Success: Loaded!')
             except:
-                print_state_message(self.__display, 'Error: %s invalid!' % os.path.basename(file_path))
+                print_state_message(self.__display, 'Error: %s has invalid data!' % os.path.basename(file_path))
