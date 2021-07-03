@@ -1,6 +1,6 @@
 import abc
 import pygame
-from config import PARTICLE_SIZE
+from .config import PARTICLE_SIZE
 
 
 class Particle(metaclass=abc.ABCMeta):

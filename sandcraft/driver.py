@@ -4,12 +4,12 @@ import pygame
 import math
 import tkinter as tk
 from tkinter import filedialog
-from config import *
-from grid import Grid, px_to_cell
-from painter import Painter
-from particle_data import *
-from particle import Particle
-from gas import Gas
+from .config import *
+from .grid import Grid, px_to_cell
+from .painter import Painter
+from .particle_data import *
+from .particle import Particle
+from .gas import Gas
 
 
 def print_state_message(screen, text):
