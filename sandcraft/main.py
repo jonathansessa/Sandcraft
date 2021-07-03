@@ -1,8 +1,8 @@
 import pygame
-import screen
-from particle_data import template_steam
-from start_menu import *
-from driver import Driver
+from . import screen
+from .particle_data import template_steam
+from .start_menu import *
+from .driver import Driver
 
 
 def main():

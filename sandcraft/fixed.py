@@ -1,6 +1,6 @@
-import liquid
-from particle import Particle
-import particle_data
+from . import liquid
+from .particle import Particle
+from . import particle_data
 
 
 class Fixed(Particle):
