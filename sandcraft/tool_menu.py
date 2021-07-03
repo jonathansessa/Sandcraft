@@ -1,6 +1,6 @@
 import pygame
 import sys
-from .config import *
+from config import *
 
 
 class ToolMenu:

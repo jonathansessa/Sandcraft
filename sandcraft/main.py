@@ -1,7 +1,8 @@
-from . import screen
-from .particle_data import template_steam
-from .start_menu import *
-from .driver import Driver
+import pygame
+import screen
+from particle_data import template_steam
+from start_menu import *
+from driver import Driver
 
 
 def main():
@@ -20,9 +21,6 @@ def main():
         driver.undiscovered.append(template_steam)
 
     while 1:
-        # (Ugly) Fix for inspect label writing outside of sandbox area
-        pygame.draw.rect(display, BG_COLOR, pygame.Rect(MARGIN, 2 * MARGIN, WINDOW_WIDTH, SANDBOX_HEIGHT + MARGIN))
-
         # Blackout entire sandbox (should optimize in the future)
         pygame.draw.rect(display, SANDBOX_COLOR, sandbox)
 
@@ -63,6 +61,7 @@ def main():
         screen.update_fps(display, clock)
         pygame.display.flip()
         clock.tick(FPS)
+
 
 if __name__ == '__main__':
     main()

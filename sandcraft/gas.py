@@ -1,7 +1,7 @@
 import random
 import pygame
-from .particle import Particle
-from . import particle_data
+from particle import Particle
+import particle_data
 
 
 class Gas(Particle):
