@@ -136,7 +136,7 @@ class Driver:
                 font = pygame.font.Font(FONT_PATH, 11)
                 if self.__grid.exists((x, y)):
                     particle = self.__grid.get((x, y))
-                    label = font.render(f"{particle.name}: {x}, {y}", True, (255, 255, 255), (0, 0, 0))
+                    label = font.render(f"{particle.name}: {x}, {y} Temp: {str(round(particle._temp, 2))} C", True, (255, 255, 255), (0, 0, 0))
                 else:
                     label = font.render(f"Empty: {x}, {y}", True, (255, 255, 255), (0, 0, 0))
 

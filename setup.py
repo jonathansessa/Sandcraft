@@ -15,7 +15,7 @@ setup(
     {
         "console_scripts":
             [
-                "play-sandcraft = sandcraft.main:main"
+                "play-sandcraft = sandcraft.main:loop_main"
             ]
     }
 )
