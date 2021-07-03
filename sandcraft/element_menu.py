@@ -25,7 +25,7 @@ class ElementMenu:
         sect_x = self._x
         sect_y = self._y
         sect_w = self._width / 2 - self.MARGIN
-        for category in ELEMENTS:
+        for category in ELEMENTS.keys():
             sect_h = self.create_section(self._surface, sect_x, sect_y, sect_w, category, ELEMENTS[category])
             sect_x += sect_w + self.MARGIN
             if sect_x >= self._x + self._width:
@@ -38,7 +38,7 @@ class ElementMenu:
             if b.contains(x, y):
                 for button in self.element_buttons:
                     button.set_inactive()
-                    if button.contains(x, y) and button.unlocked:
+                    if button.contains(x, y) and button._unlocked:
                         button.set_active()
                         driver.set_current_element(button.get_element())
                     button.update()
@@ -68,8 +68,8 @@ class ElementMenu:
 
     def discovery_demo(self):
         for button in self.element_buttons:
-            if button.get_element().name != "Steam":
-                button.unlocked = True
+            if button.get_element().name != "steam":
+                button._unlocked = True
                 button.update()
 
     class ElementButton:
