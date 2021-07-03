@@ -1,5 +1,5 @@
-from .config import *
-from .particle import Particle
+from config import *
+from particle import Particle
 
 
 """

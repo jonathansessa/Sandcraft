@@ -4,12 +4,12 @@ import pygame
 import math
 import tkinter as tk
 from tkinter import filedialog
-from .config import *
-from .grid import Grid, px_to_cell
-from .painter import Painter
-from .particle_data import *
-from .particle import Particle
-from .gas import Gas
+from config import *
+from grid import Grid, px_to_cell
+from painter import Painter
+from particle_data import *
+from particle import Particle
+from gas import Gas
 
 
 def print_state_message(screen, text):
@@ -93,6 +93,8 @@ class Driver:
 
     # Draws gray square outline instead of mouse, clips so not drawn outside sandbox
     def draw_tool_outline(self, pos, sandbox, display):
+        line_color = (100, 100, 100)
+
         if self._tool == "LINE" and self._shape_active:
             r = math.atan2((pos[1] - self._shape_start[1]), (pos[0] - self._shape_start[0])) + math.radians(90)
             width = self._size * PARTICLE_SIZE
@@ -117,22 +119,29 @@ class Driver:
         else:
             if self._tool == "INSPECT":
                 size = PARTICLE_SIZE
-
-                x = px_to_cell(pos[0])
-                y = px_to_cell(pos[1])
+                x, y = px_to_cell(pos[0]), px_to_cell(pos[1])
 
                 font = pygame.font.Font(FONT_PATH, 11)
                 if self.__grid.exists((x, y)):
-                    current = self.__grid.get((x, y))
-                    label = font.render(f"{current.name}: {x}, {y}", True, (255, 255, 255), (0, 0, 0))
+                    particle = self.__grid.get((x, y))
+                    label = font.render(f"{particle.name}: {x}, {y}", True, (255, 255, 255), (0, 0, 0))
                 else:
                     label = font.render(f"Empty: {x}, {y}", True, (255, 255, 255), (0, 0, 0))
-                label.set_clip(sandbox)
-                display.blit(label, (pos[0]+10, pos[1]))
+
+                # Adjust label location depending on proximity to edge of Sandbox
+                x_offset, y_offset = 10, 5
+                if pos[0] > SANDBOX_WIDTH * 0.75:
+                    x_offset = -label.get_width() - 10
+                if pos[1] > SANDBOX_HEIGHT * 0.95:
+                    y_offset = -label.get_height() - 5
+
+                display.blit(label, (pos[0] + x_offset, pos[1] + y_offset))
+
             # Draw tool for add/delete
             else:
                 size = self._size * PARTICLE_SIZE
 
+            # Create lines for square, cropped by Sandbox
             s1 = sandbox.clipline(pos[0], pos[1], pos[0] + size, pos[1])
             s2 = sandbox.clipline(pos[0] + size, pos[1], pos[0] + size, pos[1] + size)
             s3 = sandbox.clipline(pos[0] + size, pos[1] + size, pos[0], pos[1] + size)
@@ -140,13 +149,13 @@ class Driver:
 
         # Draw tool outlines (if they exist)
         if s1:
-            pygame.draw.line(display, (100, 100, 100), s1[0], s1[1])
+            pygame.draw.line(display, line_color, s1[0], s1[1])
         if s2:
-            pygame.draw.line(display, (100, 100, 100), s2[0], s2[1])
+            pygame.draw.line(display, line_color, s2[0], s2[1])
         if s3:
-            pygame.draw.line(display, (100, 100, 100), s3[0], s3[1])
+            pygame.draw.line(display, line_color, s3[0], s3[1])
         if s4:
-            pygame.draw.line(display, (100, 100, 100), s4[0], s4[1])
+            pygame.draw.line(display, line_color, s4[0], s4[1])
 
     def start_shape(self, pos):
         self._shape_start = pos

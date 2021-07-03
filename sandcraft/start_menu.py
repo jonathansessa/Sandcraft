@@ -1,6 +1,6 @@
 import pygame
 import sys
-from .config import *
+from config import *
 
 
 def create_menu_button(menu, text, y):
