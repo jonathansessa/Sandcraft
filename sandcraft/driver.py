@@ -283,14 +283,14 @@ class Driver:
             particle.render(screen)
 
             if self._mode == "DISCOVERY" and len(self.undiscovered) != 0:
-                if particle.name == "Steam":
+                if particle.name == "steam":
                     for e in self.__element_menu.element_buttons:
                         if e.get_element() == template_steam:
-                            e.unlocked = True
+                            e._unlocked = True
                             e.update()
                             try:
                                 for elem in self.undiscovered:
-                                    if elem.name == "Steam":
+                                    if elem.name == "steam":
                                         self.undiscovered.remove(elem)
                                 # self.undiscovered.remove(template_steam)
                             except ValueError:
@@ -362,9 +362,9 @@ class Driver:
 
                 for e in self.__element_menu.element_buttons:
                     if e.get_element().name in [element.name for element in self.undiscovered]:
-                        e.unlocked = False
+                        e._unlocked = False
                     else:
-                        e.unlocked = True
+                        e._unlocked = True
                     e.update()
 
                 self._mode = data['mode']
