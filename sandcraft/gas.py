@@ -1,8 +1,9 @@
 import random
 import pygame
+
+
 from particle import Particle
 import particle_data
-
 
 class Gas(Particle):
     def __init__(
@@ -12,16 +13,22 @@ class Gas(Particle):
             temp, temp_freeze, temp_boil,
             density,
             color,
-            name):
+            name,
+            flammability,
+            state):
         super().__init__(
             col, row,
             vel_x, vel_y,
             temp, temp_freeze, temp_boil,
             density,
             color,
-            name)
+            name,
+            flammability,
+            state)
+
         self._lifespan = pygame.time.get_ticks() + 3000
         self._remaining = 3000
+
 
     def clone(self, col, row):
         return Gas(
@@ -30,10 +37,12 @@ class Gas(Particle):
             self._temp, self._temp_freeze, self._temp_boil,
             self._density,
             self._color,
-            self._name)
+            self._name,
+            self._flammability,
+            self._state)
 
     def update_on_tick(self, driver, grid):
-        if pygame.time.get_ticks() > self._lifespan:
+        if (pygame.time.get_ticks() > self._lifespan) or (self._temp <= self._temp_freeze):
             driver.delete(self)
             return
 
@@ -61,10 +70,26 @@ class Gas(Particle):
             else:
                 collider = grid.get(next_pos)
 
-                if self._temp_boil <= collider.temp:
-                    self._boil(driver, grid, particle_data.template_steam.clone(self._col, self._row))
+                # Heat Transfer
+                near_list = grid.get_near((self._col, self._row))
+                for particle in near_list:
+                    temp_diff = (self._temp - particle._temp) / 50
+                    particle._update_temp(particle, particle._temp + temp_diff)
+                    self._update_temp(self, self._temp - temp_diff)
 
-                elif self._density > collider.density:
+                    # Metal -> lava when heated by fire
+                    if particle.name == "metal" and particle._temp_freeze <= particle._temp:
+                        oldtemp = particle._temp
+                        particle._melt(driver, grid, particle_data.template_lava.clone(particle._col, particle._row))
+                        particle._update_temp(particle, oldtemp)
+
+                    # Burning
+                    if (particle.name == "powder" or particle.name == "wood") and (particle._temp_freeze <= particle._temp):
+                        oldtemp = particle._temp
+                        particle._melt(driver, grid, particle_data.template_fire.clone(particle._col, particle._row))
+                        particle._update_temp(particle, oldtemp)
+
+                if self._density > collider.density:
                     self._force_update_near(grid)
                     grid.swap(pos, next_pos)
 

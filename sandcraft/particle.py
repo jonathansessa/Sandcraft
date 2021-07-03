@@ -11,7 +11,9 @@ class Particle(metaclass=abc.ABCMeta):
             temp, temp_freeze, temp_boil,
             density,
             color,
-            name):
+            name,
+            flammability,
+            state):
 
         self._col = col
         self._row = row
@@ -25,6 +27,8 @@ class Particle(metaclass=abc.ABCMeta):
         self._name = name
         self._is_live = True
         self._needs_update = True
+        self._flammability = flammability
+        self._state = state
 
     """
         clone is an abstract method that is overridden by state classes deriving from Particle.
@@ -76,8 +80,24 @@ class Particle(metaclass=abc.ABCMeta):
 
     """
         __boil is defined to reduce redundancy between the state classes (solid, liquid, gas, etc.)
+        
+        Freezing and melting are identical in function for now.
     """
     def _boil(self, driver, grid, new_particle):
+        self._is_live = False
+        near_list = grid.get_near((self._col, self._row))
+        for particle in near_list:
+            particle.force_update()
+        driver.add(new_particle)
+
+    def _freeze(self, driver, grid, new_particle):
+        self._is_live = False
+        near_list = grid.get_near((self._col, self._row))
+        for particle in near_list:
+            particle.force_update()
+        driver.add(new_particle)
+
+    def _melt(self, driver, grid, new_particle):
         self._is_live = False
         near_list = grid.get_near((self._col, self._row))
         for particle in near_list:
@@ -93,6 +113,13 @@ class Particle(metaclass=abc.ABCMeta):
             particle.force_update()
 
     """
+        _update_temp changes the temperature of the particle, for collision purposes
+    """
+
+    def _update_temp(self, grid, new_temp):
+        self._temp = new_temp
+
+    """
         properties (read only)
     """
     @property
@@ -102,10 +129,6 @@ class Particle(metaclass=abc.ABCMeta):
     @property
     def row(self):
         return self._row
-
-    @property
-    def temp(self):
-        return self._temp
 
     @property
     def density(self):
@@ -122,3 +145,7 @@ class Particle(metaclass=abc.ABCMeta):
     @property
     def name(self):
         return self._name
+
+    @property
+    def state(self):
+        return self._state
