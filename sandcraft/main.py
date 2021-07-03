@@ -31,7 +31,7 @@ def main():
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if sandbox.collidepoint(pygame.mouse.get_pos()):
                     driver.set_tool_use(True)
-                    if driver.get_tool() == "LINE" or driver.get_tool() == "RECT":
+                    if driver.get_tool() == "LINE" or driver.get_tool() == "RECT" or driver.get_tool() == "OVAL":
                         driver.start_shape(pygame.mouse.get_pos())
                 elif element_menu.contains(event.pos[0], event.pos[1]):
                     element_menu.update(driver, event.pos[0], event.pos[1])
@@ -39,10 +39,14 @@ def main():
                     tool_menu.update(driver, event.pos[0], event.pos[1])
             elif event.type == pygame.MOUSEBUTTONUP:
                 driver.set_tool_use(False)
-                if driver.get_tool() == "LINE":
-                    driver.end_line(pygame.mouse.get_pos())
-                elif driver.get_tool() == "RECT":
-                    driver.end_rect(pygame.mouse.get_pos())
+                driver.end_active_shape()
+                if sandbox.collidepoint(pygame.mouse.get_pos()):
+                    if driver.get_tool() == "LINE":
+                        driver.end_line(pygame.mouse.get_pos())
+                    elif driver.get_tool() == "RECT":
+                        driver.end_rect(pygame.mouse.get_pos())
+                    elif driver.get_tool() == "OVAL":
+                        driver.end_oval(pygame.mouse.get_pos())
 
         # Update particle positions and apply tool (if is being used)
         driver.update_particles(pygame.mouse, sandbox, display)

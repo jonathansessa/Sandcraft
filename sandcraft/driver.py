@@ -79,6 +79,9 @@ class Driver:
     def set_tool_use(self, status):
         self._tool_use = status
 
+    def end_active_shape(self):
+        self._shape_active = False
+
     # Changes brush size with min, max value
     def set_size(self, value):
         self._size += value
@@ -116,6 +119,15 @@ class Driver:
             s3 = sandbox.clipline(x2, y2, x2, y1)
             s4 = sandbox.clipline(x2, y1, x1, y1)
 
+        elif self._tool == "OVAL" and self._shape_active:
+            (x1, y1) = (self._shape_start[0], self._shape_start[1])
+            (x2, y2) = (pos[0], pos[1])
+            width, height = abs(x2 - x1), abs(y2 - y1)
+
+            shape = pygame.Rect(min(x1, x2), min(y1, y2), width, height)
+            pygame.draw.ellipse(display, line_color, shape, 1)
+
+            return
         else:
             if self._tool == "INSPECT":
                 size = PARTICLE_SIZE
@@ -171,10 +183,40 @@ class Driver:
         self._shape_active = False
         self.draw_rect()
 
-    def draw_line(self):
-        (p2, p2) = (px_to_cell(self._shape_end[0]), px_to_cell(self._shape_end[1]))
+    def end_oval(self, pos):
+        self._shape_end = pos
+        self._shape_active = False
+        self.draw_oval()
 
-        if not self.__grid.is_in_bounds([p2, p2]):
+    # Ellipse collision detection solution from:
+    # https://stackoverflow.com/questions/59971407/how-can-i-test-if-a-point-is-in-an-ellipse
+    def draw_oval(self):
+        width, height = abs(self._shape_end[0] - self._shape_start[0]), abs(self._shape_end[1] - self._shape_start[1])
+        shape = pygame.Rect(min(self._shape_start[0], self._shape_end[0]),
+                            min(self._shape_start[1], self._shape_end[1]), width, height)
+
+        x1, y1, x2, y2 = shape.left, shape.top, shape.right, shape.bottom
+        cx, cy = shape.centerx, shape.centery
+        a = width // 2
+        b = height // 2
+
+        if a == 0 or b == 0:
+            return
+        scale = a / b
+
+        for i in range(x1, x2 + 1):
+            for j in range(y1, y2 + 1):
+                dx = i - cx
+                dy = (j - cy) * scale
+                if dx*dx + dy*dy <= a*a:
+                    (px, py) = (px_to_cell(i), px_to_cell(j))
+                    if self.__grid.is_in_bounds([px, py]) and self.__grid.exists([px, py]) is False:
+                        self.add(self.__painter.get_template_particle().clone(px, py))
+
+    def draw_line(self):
+        (p1, p2) = (px_to_cell(self._shape_end[0]), px_to_cell(self._shape_end[1]))
+
+        if not self.__grid.is_in_bounds([p1, p2]):
             return
 
         r = math.atan2((self._shape_end[1] - self._shape_start[1]), (self._shape_end[0] - self._shape_start[0]))
@@ -226,7 +268,7 @@ class Driver:
                 particle.force_update()
 
         if self._tool_use:
-            if self._tool == "ADD" or self._tool == "DELETE":
+            if self._tool == "ADD" or self._tool == "DELETE" or self._tool == "ERASE":
                 self.__painter.use_tool(mouse, self, self.__grid)
 
     def get_current_element(self):

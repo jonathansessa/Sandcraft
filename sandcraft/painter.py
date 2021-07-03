@@ -17,6 +17,9 @@ class Painter:
                         driver.add(self.__temp.clone(x, y))
                     elif grid.exists([x, y]) is True and driver.get_tool() == "DELETE":
                         driver.delete(grid.get([x, y]))
+                    elif grid.exists([x, y]) is True and driver.get_tool() == "ERASE":
+                        if grid.get([x, y]).name == self.__temp.name:
+                            driver.delete(grid.get([x, y]))
 
     def set_template_particle(self, template_particle):
         self.__temp = template_particle
