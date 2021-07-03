@@ -12,7 +12,8 @@ class Liquid(Particle):
             density,
             color,
             type,
-            flammability):
+            flammability,
+            state):
         super().__init__(
             col, row,
             vel_x, vel_y,
@@ -20,7 +21,8 @@ class Liquid(Particle):
             density,
             color,
             type,
-            flammability)
+            flammability,
+            state)
 
     def clone(self, col, row):
         return Liquid(
@@ -30,7 +32,8 @@ class Liquid(Particle):
             self._density,
             self._color,
             self._type,
-            self._flammability)
+            self._flammability,
+            self._state)
 
     def update_on_tick(self, driver, grid):
         if self._needs_update is False:
@@ -50,6 +53,7 @@ class Liquid(Particle):
 
                 collider = grid.get(next_pos)
 
+                # Heat transfer
                 near_list = grid.get_near((self._col, self._row))
                 for particle in near_list:
 
@@ -57,11 +61,42 @@ class Liquid(Particle):
                     particle._update_temp(particle, particle._temp + temp_diff)
                     self._update_temp(self, self._temp - temp_diff)
 
-                if self._temp_boil <= self._temp:
-                    self._boil(driver, grid, particle_data.template_steam.clone(self._col, self._row))
+                    # Water below freezing -> ice
+                    if particle.type == "water" and particle._temp_freeze > particle._temp:
+                        oldtemp = particle._temp
+                        particle._freeze(driver, grid, particle_data.template_ice.clone(particle._col, particle._row))
+                        particle._update_temp(particle, oldtemp)
 
-                if self._temp_freeze >= self._temp:
+                    # Lava -> basalt when cooled
+                    if particle.type == "lava" and particle._temp_freeze >= particle._temp:
+                        oldtemp = particle._temp
+                        particle._freeze(driver, grid, particle_data.template_basalt.clone(particle._col, particle._row))
+                        particle._update_temp(particle, oldtemp)
+
+                # Water -> ice when below freezing
+                if self.type == "water" and self._temp_freeze > self._temp:
+                    oldtemp = self._temp
+                    self._freeze(driver, grid, particle_data.template_ice.clone(self._col, self._row))
+                    self._update_temp(self, oldtemp)
+
+                # All liquids except oil above boiling -> gas
+                if self.type != "oil" and self._temp_boil <= self._temp:
+                    oldtemp = self._temp
+                    self._boil(driver, grid, particle_data.template_steam.clone(self._col, self._row))
+                    self._update_temp(self, oldtemp)
+
+                # Oil burns
+                if self.type == "oil" and self._temp_boil <= self._temp:
+                    oldtemp = self._temp
+                    self._boil(driver, grid, particle_data.template_fire.clone(self._col, self._row))
+                    self._update_temp(self, oldtemp)
+
+                # Lava -> basalt when cooled
+                if self.type == "lava" and self._temp_freeze >= self._temp:
+                    oldtemp = self._temp
                     self._freeze(driver, grid, particle_data.template_basalt.clone(self._col, self._row))
+                    self._update_temp(self, oldtemp)
+
 
                 if self._density > collider.density:
                     self._force_update_near(grid)

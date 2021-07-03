@@ -1,7 +1,6 @@
 from particle import Particle
 import particle_data
 
-
 class Solid(Particle):
     def __init__(
             self,
@@ -11,7 +10,8 @@ class Solid(Particle):
             density,
             color,
             type,
-            flammability):
+            flammability,
+            state):
         super().__init__(
             col, row,
             vel_x, vel_y,
@@ -19,7 +19,8 @@ class Solid(Particle):
             density,
             color,
             type,
-            flammability)
+            flammability,
+            state)
 
     def clone(self, col, row):
         return Solid(
@@ -29,7 +30,8 @@ class Solid(Particle):
             self._density,
             self._color,
             self._type,
-            self._flammability)
+            self._flammability,
+            self._state)
 
     def update_on_tick(self, driver, grid):
         if self._needs_update is False:
@@ -48,6 +50,7 @@ class Solid(Particle):
             else:
                 collider = grid.get(next_pos)
 
+                # Heat transfer
                 near_list = grid.get_near((self._col, self._row))
                 for particle in near_list:
 
@@ -57,13 +60,17 @@ class Solid(Particle):
                     particle._update_temp(particle, particle._temp + temp_diff)
                     self._update_temp(self, self._temp - temp_diff)
 
-                if (self._type == "sand" or self._type == "wood") and (self._temp_freeze <= self._temp):
-                    oldTemp = self._temp
+                # Burning
+                if (self._type == "powder" or self._type == "wood") and (self._temp_freeze <= self._temp):
+                    oldtemp = self._temp
                     self._melt(driver, grid, particle_data.template_fire.clone(self._col, self._row))
-                    self._update_temp(self, oldTemp)
+                    self._update_temp(self, oldtemp)
 
-                if self._type == "metal" and self._temp_freeze <= self._temp:
+                # Molten stone or sand -> lava
+                if (self._type == "stone" or self._type == "sand") and self._temp_freeze <= self._temp:
+                    oldtemp = self._temp
                     self._melt(driver, grid, particle_data.template_lava.clone(self._col, self._row))
+                    self._update_temp(self, oldtemp)
 
                 if self._density > collider.density:
                     self._force_update_near(grid)

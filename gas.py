@@ -4,7 +4,6 @@ import pygame
 from particle import Particle
 import particle_data
 
-
 class Gas(Particle):
     def __init__(
             self,
@@ -14,8 +13,8 @@ class Gas(Particle):
             density,
             color,
             type,
-            flammability):
-
+            flammability,
+            state):
         super().__init__(
             col, row,
             vel_x, vel_y,
@@ -23,7 +22,9 @@ class Gas(Particle):
             density,
             color,
             type,
-            flammability)
+            flammability,
+            state)
+
         self._lifespan = pygame.time.get_ticks() + 3000
 
     def clone(self, col, row):
@@ -34,7 +35,8 @@ class Gas(Particle):
             self._density,
             self._color,
             self._type,
-            self._flammability)
+            self._flammability,
+            self._state)
 
     def update_on_tick(self, driver, grid):
         if (pygame.time.get_ticks() > self._lifespan) or (self._temp <= self._temp_freeze):
@@ -65,20 +67,24 @@ class Gas(Particle):
             else:
                 collider = grid.get(next_pos)
 
+                # Heat Transfer
                 near_list = grid.get_near((self._col, self._row))
                 for particle in near_list:
-
                     temp_diff = (self._temp - particle._temp) / 50
                     particle._update_temp(particle, particle._temp + temp_diff)
                     self._update_temp(self, self._temp - temp_diff)
 
+                    # Metal -> lava when heated by fire
                     if particle._type == "metal" and particle._temp_freeze <= particle._temp:
+                        oldtemp = particle._temp
                         particle._melt(driver, grid, particle_data.template_lava.clone(particle._col, particle._row))
+                        particle._update_temp(particle, oldtemp)
 
-                    if (particle._type == "sand" or particle._type == "wood") and (particle._temp_freeze <= particle._temp):
-                        oldTemp = particle._temp
+                    # Burning
+                    if (particle._type == "powder" or particle._type == "wood") and (particle._temp_freeze <= particle._temp):
+                        oldtemp = particle._temp
                         particle._melt(driver, grid, particle_data.template_fire.clone(particle._col, particle._row))
-                        particle._update_temp(particle, oldTemp)
+                        particle._update_temp(particle, oldtemp)
 
                 if self._density > collider.density:
                     self._force_update_near(grid)

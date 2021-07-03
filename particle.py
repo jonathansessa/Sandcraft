@@ -12,7 +12,8 @@ class Particle(metaclass=abc.ABCMeta):
             density,
             color,
             type,
-            flammability):
+            flammability,
+            state):
 
         self._col = col
         self._row = row
@@ -27,6 +28,7 @@ class Particle(metaclass=abc.ABCMeta):
         self._needs_update = True
         self._type = type
         self._flammability = flammability
+        self._state = state
 
     """
         clone is an abstract method that is overridden by state classes deriving from Particle.
@@ -88,14 +90,12 @@ class Particle(metaclass=abc.ABCMeta):
             particle.force_update()
         driver.add(new_particle)
 
-
     def _freeze(self, driver, grid, new_particle):
         self._is_live = False
         near_list = grid.get_near((self._col, self._row))
         for particle in near_list:
             particle.force_update()
         driver.add(new_particle)
-
 
     def _melt(self, driver, grid, new_particle):
         self._is_live = False
@@ -145,3 +145,7 @@ class Particle(metaclass=abc.ABCMeta):
     @property
     def type(self):
         return self._type
+
+    @property
+    def state(self):
+        return self._state

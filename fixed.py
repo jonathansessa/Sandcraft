@@ -12,7 +12,8 @@ class Fixed(Particle):
             density,
             color,
             type,
-            flammability):
+            flammability,
+            state):
         super().__init__(
             col, row,
             vel_x, vel_y,
@@ -20,7 +21,8 @@ class Fixed(Particle):
             density,
             color,
             type,
-            flammability)
+            flammability,
+            state)
 
     def clone(self, col, row):
         return Fixed(
@@ -30,7 +32,8 @@ class Fixed(Particle):
             self._density,
             self._color,
             self._type,
-            self._flammability)
+            self._flammability,
+            self._state)
 
     def update_on_tick(self, driver, grid):
         if self._needs_update is False:
@@ -38,24 +41,39 @@ class Fixed(Particle):
 
         near_list = grid.get_near((self._col, self._row))
 
+        # Heat transfer
         for particle in near_list:
-
             temp_diff = (self._temp - particle._temp) / 50
             particle._update_temp(particle, particle._temp + temp_diff)
             self._update_temp(self, self._temp - temp_diff)
 
-            if particle._temp_boil <= particle._temp:
-                particle._boil(driver, grid, particle_data.template_steam.clone(particle._col, particle._row))
+        # All fixed solids above boil temp -> gas
+        if self._temp_boil <= self._temp:
+            self._boil(driver, grid, particle_data.template_steam.clone(self._col, self._row))
 
-            if (particle.type == "lava") and (particle._temp_freeze >= particle._temp):
-                particle._freeze(driver, grid, particle_data.template_basalt.clone(particle._col, particle._row))
+        # Ice melts into water
+        if self.type == "ice" and self._temp_freeze <= self._temp:
+            oldTemp = self._temp
+            self._melt(driver, grid, particle_data.template_water.clone(self._col, self._row))
+            self._update_temp(self, oldTemp)
 
-            """
-            if self._temp_boil < particle.temp:
-                self._boil(driver, grid, particle_data.template_steam.clone(self._col, self._row))
-                break
-                """
+        # Basalt and metal melts into lava
+        if (self.type == "basalt" or self.type == "metal") and self._temp_freeze <= self._temp:
+            oldTemp = self._temp
+            self._melt(driver, grid, particle_data.template_lava.clone(self._col, self._row))
+            self._update_temp(self, oldTemp)
 
+        # Wood burns
+        if self.type == "wood"  and self._temp_freeze <= self._temp:
+            oldTemp = self._temp
+            self._melt(driver, grid, particle_data.template_fire.clone(self._col, self._row))
+            self._update_temp(self, oldTemp)
+
+        # Molten metal -> lava
+        if self._type == "metal" and self._temp_freeze <= self._temp:
+            oldtemp = self._temp
+            self._melt(driver, grid, particle_data.template_lava.clone(self._col, self._row))
+            self._update_temp(self, oldtemp)
 
 
         self._needs_update = False
