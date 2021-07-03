@@ -149,3 +149,7 @@ class Particle(metaclass=abc.ABCMeta):
     @property
     def state(self):
         return self._state
+
+    @property
+    def temp(self):
+        return self._temp

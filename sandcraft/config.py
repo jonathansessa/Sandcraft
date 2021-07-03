@@ -1,5 +1,6 @@
 import math
 import os
+import pygame
 
 SANDBOX_WIDTH = 800
 SANDBOX_HEIGHT = 600
@@ -25,3 +26,6 @@ FONT_COLOR = (255, 255, 255)
 
 BG_COLOR = (33, 33, 33)
 SANDBOX_COLOR = (0, 0, 0)
+
+TOMENU_EVENT_TYPE = pygame.USEREVENT + 1
+TOMENU_EVENT = pygame.event.Event(TOMENU_EVENT_TYPE,)

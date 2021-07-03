@@ -3,6 +3,7 @@ from . import screen
 from .particle_data import template_steam
 from .start_menu import *
 from .driver import Driver
+from .config import TOMENU_EVENT_TYPE
 
 
 def main():
@@ -28,6 +29,8 @@ def main():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            elif event.type == TOMENU_EVENT_TYPE:
+                return
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if sandbox.collidepoint(pygame.mouse.get_pos()):
                     driver.set_tool_use(True)
@@ -67,5 +70,10 @@ def main():
         clock.tick(FPS)
 
 
+def loop_main():
+    while 1:
+        main()
+
+
 if __name__ == '__main__':
-    main()
+    loop_main()

@@ -10,7 +10,7 @@ class ToolMenu:
         self._y = y
         self._width = width
         self._height = 100
-        self._TOOLS = ["ADD", "DELETE", "ERASE", "LINE", "RECT", "OVAL", "INSPECT", "CLEAR", "SAVE", "LOAD", "QUIT"]
+        self._TOOLS = ["ADD", "DELETE", "ERASE", "LINE", "RECT", "OVAL", "INSPECT", "CLEAR", "SAVE", "LOAD", "EXIT"]
         self.tool_buttons = []
         self.draw()
 
@@ -48,9 +48,8 @@ class ToolMenu:
                             driver.save_state()
                         elif button.get_tool() == "LOAD":
                             driver.load_state()
-                        elif button.get_tool() == "QUIT":
-                            pygame.quit()
-                            sys.exit()
+                        elif button.get_tool() == "EXIT":
+                            pygame.event.post(TOMENU_EVENT)
                         elif button.get_tool() == "-":
                             driver.set_size(-1)
                             self.update_tool_size(driver)
