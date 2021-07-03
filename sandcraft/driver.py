@@ -268,7 +268,7 @@ class Driver:
                 particle.force_update()
 
         if self._tool_use:
-            if self._tool == "ADD" or self._tool == "DELETE":
+            if self._tool == "ADD" or self._tool == "DELETE" or self._tool == "ERASE":
                 self.__painter.use_tool(mouse, self, self.__grid)
 
     def get_current_element(self):
