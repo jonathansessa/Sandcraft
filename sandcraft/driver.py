@@ -94,6 +94,23 @@ class Driver:
         self.__particles.clear()
         self.__grid = Grid()
 
+    def clear_element(self):
+        selected_elem = None
+        for elem in self.__element_menu.element_buttons:
+            if elem._active:
+                selected_elem = elem._particle
+                break
+        while selected_elem.name in [elem.name for elem in self.__particles]:
+            for particle in self.__particles:
+                if particle.name == selected_elem.name:
+                    try:
+                        self.__particles.remove(particle)
+                        self.__grid.remove(particle)
+                        for p in self.__grid.get_near((particle.col, particle.row)):
+                            p.force_update()
+                    except ValueError:
+                        pass
+
     # Draws gray square outline instead of mouse, clips so not drawn outside sandbox
     def draw_tool_outline(self, pos, sandbox, display):
         line_color = (100, 100, 100)
