@@ -10,28 +10,30 @@ class ToolMenu:
         self._y = y
         self._width = width
         self._height = 100
-        self._TOOLS = ["ADD", "DELETE", "ERASE", "LINE", "RECT", "OVAL", "INSPECT", "CLEAR", "SAVE", "LOAD", "EXIT"]
+        self._TOOLS = ["ADD", "DELETE", "ERASE", "LINE", "RECT", "OVAL", "INSPECT", "CLEAR", "REMOVE", "SAVE", "LOAD", "EXIT"]
         self.tool_buttons = []
         self.draw()
 
     def draw(self):
         button_x = self._x
         button_y = self._y
+        rows = 1
         for tool in self._TOOLS:
             new_button = self.ToolButton(self._surface, button_x, button_y, tool)
 
             # If new button is outside of tool menu
-            if button_x + new_button.get_width() > self._x + self._width:
+            if button_x + new_button.get_width() > self._width:  # + self._x:
                 pygame.draw.rect(self._surface, BG_COLOR,
                                  pygame.Rect(button_x, button_y, new_button.get_width(), new_button.get_height()))
                 button_x = self._x
-                button_y = self._y + new_button.get_height() + 10
+                button_y = new_button.get_height() + 10 + button_y  # self._y +
                 new_button = self.ToolButton(self._surface, button_x, button_y, tool)
+                rows += 1
 
             button_x += new_button.get_width() + 10
             self.tool_buttons.append(new_button)
 
-        self.draw_adjustment(1)
+        self.draw_adjustment(1, rows)
 
     # Checks if a button was clicked, then changes corresponding button to active
     def update(self, driver, x, y):
@@ -44,6 +46,8 @@ class ToolMenu:
                             button.set_active(driver)
                         elif button.get_tool() == "CLEAR":
                             driver.clear_sandbox()
+                        elif button.get_tool() == "REMOVE":
+                            driver.clear_element()
                         elif button.get_tool() == "SAVE":
                             driver.save_state()
                         elif button.get_tool() == "LOAD":
@@ -71,8 +75,8 @@ class ToolMenu:
         label = font.render(f"BRUSH SIZE: {tool_size} ", True, pygame.Color(255, 255, 255), BG_COLOR)
         self._surface.blit(label, (self._x, self._y + 70))
 
-    def draw_adjustment(self, tool_size):
-        top = self._y + 70
+    def draw_adjustment(self, tool_size, rows):
+        top = self._y + 35 * rows
         left = self._x
 
         font = pygame.font.Font(FONT_PATH, 11)

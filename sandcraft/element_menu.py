@@ -1,5 +1,5 @@
 import pygame
-from .config import FONT_PATH
+from .config import FONT_PATH, BG_COLOR
 from .particle_data import ELEMENTS
 
 
@@ -43,6 +43,27 @@ class ElementMenu:
                         driver.set_current_element(button.get_element())
                     button.update()
 
+    def draw_tooltip(self, driver, mouse_x, mouse_y):
+        elem_menu_rect = pygame.Rect(self._x, self._y, self._width, self._height)
+        pygame.draw.rect(self._surface, BG_COLOR, elem_menu_rect)
+        self.element_buttons.clear()
+        self.draw()
+
+        highlighted = None
+        for button in self.element_buttons:
+            if button._particle in driver.undiscovered:
+                button._unlocked = False
+                button.update()
+            if button.contains(mouse_x, mouse_y) and button._unlocked:
+                highlighted = button
+        if highlighted is None:
+            return
+
+        font = pygame.font.Font(FONT_PATH, 11)
+        label = font.render(f"{highlighted._particle.name}", True, (255, 255, 255), (0, 0, 0))
+        x_offset, y_offset = 15, 10
+        self._surface.blit(label, (mouse_x + x_offset, mouse_y - y_offset))
+
     def contains(self, x, y):
         if x < self._x or self._x + self._width < x:
             return False
@@ -68,8 +89,8 @@ class ElementMenu:
 
     def discovery_demo(self):
         for button in self.element_buttons:
-            if button.get_element().name != "steam":
-                button._unlocked = True
+            if button.get_element().name == "steam":
+                button._unlocked = False
                 button.update()
 
     class ElementButton:
@@ -84,7 +105,7 @@ class ElementMenu:
             self._particle = template_particle
             self._active = False
             self._enabled = True
-            self._unlocked = (mode == "SANDBOX")
+            self._unlocked = True
             self.update()
 
         # Redraws button based on particle and if unlocked/enabled/active

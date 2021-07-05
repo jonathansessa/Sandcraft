@@ -94,6 +94,25 @@ class Driver:
         self.__particles.clear()
         self.__grid = Grid()
 
+    def clear_element(self):
+        selected_elem = None
+        for elem in self.__element_menu.element_buttons:
+            if elem._active:
+                selected_elem = elem._particle
+                break
+        if selected_elem is None:
+            return
+        while selected_elem.name in [elem.name for elem in self.__particles]:
+            for particle in self.__particles:
+                if particle.name == selected_elem.name:
+                    try:
+                        self.__particles.remove(particle)
+                        self.__grid.remove(particle)
+                        for p in self.__grid.get_near((particle.col, particle.row)):
+                            p.force_update()
+                    except ValueError:
+                        pass
+
     # Draws gray square outline instead of mouse, clips so not drawn outside sandbox
     def draw_tool_outline(self, pos, sandbox, display):
         line_color = (100, 100, 100)
@@ -136,7 +155,8 @@ class Driver:
                 font = pygame.font.Font(FONT_PATH, 11)
                 if self.__grid.exists((x, y)):
                     particle = self.__grid.get((x, y))
-                    label = font.render(f"{particle.name}: {x}, {y} Temp: {str(round(particle._temp, 2))} C", True, (255, 255, 255), (0, 0, 0))
+                    label = font.render(f"{particle.name}: {x}, {y} Temp: {str(round(particle._temp, 1))} C",
+                                        True, (255, 255, 255), (0, 0, 0))
                 else:
                     label = font.render(f"Empty: {x}, {y}", True, (255, 255, 255), (0, 0, 0))
 
