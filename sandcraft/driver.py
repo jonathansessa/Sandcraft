@@ -100,6 +100,8 @@ class Driver:
             if elem._active:
                 selected_elem = elem._particle
                 break
+        if selected_elem is None:
+            return
         while selected_elem.name in [elem.name for elem in self.__particles]:
             for particle in self.__particles:
                 if particle.name == selected_elem.name:
@@ -153,7 +155,8 @@ class Driver:
                 font = pygame.font.Font(FONT_PATH, 11)
                 if self.__grid.exists((x, y)):
                     particle = self.__grid.get((x, y))
-                    label = font.render(f"{particle.name}: {x}, {y} Temp: {str(round(particle._temp, 2))} C", True, (255, 255, 255), (0, 0, 0))
+                    label = font.render(f"{particle.name}: {x}, {y} Temp: {str(round(particle._temp, 1))} C",
+                                        True, (255, 255, 255), (0, 0, 0))
                 else:
                     label = font.render(f"Empty: {x}, {y}", True, (255, 255, 255), (0, 0, 0))
 
