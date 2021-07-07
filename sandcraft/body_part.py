@@ -11,18 +11,14 @@ class BodyPart(Particle):
             temp, temp_freeze, temp_boil,
             density,
             color,
-            name,
-            flammability,
-            state):
+            name):
         super().__init__(
             col, row,
             vel_x, vel_y,
             temp, temp_freeze, temp_boil,
             density,
             color,
-            name,
-            flammability,
-            state)
+            name)
         self._body = None
 
 
@@ -33,9 +29,7 @@ class BodyPart(Particle):
             self._temp, self._temp_freeze, self._temp_boil,
             self._density,
             self._color,
-            self._name,
-            self._flammability,
-            self._state)
+            self._name)
 
     """
         "update_on_tick" is needed for every particle due to the way 
