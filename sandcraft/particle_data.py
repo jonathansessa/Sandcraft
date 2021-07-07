@@ -2,7 +2,6 @@ from .solid import Solid
 from .liquid import Liquid
 from .gas import Gas
 from .fixed import Fixed
-from .body_part import BodyPart
 
 
 """
@@ -150,20 +149,10 @@ template_generator = Fixed(
                     0,                      # flammability
                     "fixed")                # state
 
-template_bodyParticle = BodyPart(
-                    0, 0,                   # position
-                    0, 1,                   # velocity
-                    20, -100, 1000,          # temperature
-                    1.5,                    # density
-                    (0, 255, 0),
-                    "bodypart",
-                    0,
-                    "solid")          # color
-
 # Particle dictionary used to create particle selection tool
 ELEMENTS = {
     "FIXED": [template_wood, template_metal, template_basalt, template_ice],
-    "SOLIDS": [template_sand, template_powder, template_stone, template_bodyParticle],
+    "SOLIDS": [template_sand, template_powder, template_stone],
     "LIQUIDS": [template_water, template_lava, template_oil],
     "GASES": [template_steam, template_fire, template_fog],
     "SPECIAL": [template_generator]
