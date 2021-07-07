@@ -56,8 +56,6 @@ class Driver:
     def add(self, particle):
         self.__particles.append(particle)
         self.__grid.emplace(particle)
-        if isinstance(particle, BodyPart): #needed for body particle recognition as opposed to individual particles
-            particle.latch(self.__grid)
 
     def delete(self, particle):
         try:
