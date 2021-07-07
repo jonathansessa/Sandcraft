@@ -10,7 +10,6 @@ from .painter import Painter
 from .particle_data import *
 from .particle import Particle
 from .gas import Gas
-from .body_part import BodyPart
 
 
 def print_state_message(screen, text):
