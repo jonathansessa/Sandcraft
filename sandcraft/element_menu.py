@@ -15,18 +15,19 @@ class ElementMenu:
         self._x = x
         self._y = y
         self._width = width
-        self._height = 300
+        self._height = 150
         self._mode = mode
         self.element_buttons = []
-        self.draw()
+        self.draw(True)
 
     # Creates the menu by building each section based on particle_data
-    def draw(self):
+    # Create flag determines whether button should be instantiated (false for redrawing section labels)
+    def draw(self, create):
         sect_x = self._x
         sect_y = self._y
         sect_w = self._width / 2 - self.MARGIN
         for category in ELEMENTS.keys():
-            sect_h = self.create_section(self._surface, sect_x, sect_y, sect_w, category, ELEMENTS[category])
+            sect_h = self.create_section(self._surface, sect_x, sect_y, sect_w, category, ELEMENTS[category], create)
             sect_x += sect_w + self.MARGIN
             if sect_x >= self._x + self._width:
                 sect_x = self._x
@@ -46,21 +47,18 @@ class ElementMenu:
     def draw_tooltip(self, driver, mouse_x, mouse_y):
         elem_menu_rect = pygame.Rect(self._x, self._y, self._width, self._height)
         pygame.draw.rect(self._surface, BG_COLOR, elem_menu_rect)
-        self.element_buttons.clear()
-        self.draw()
+        self.draw(False)
 
-        highlighted = None
+        hovered = None
         for button in self.element_buttons:
-            if button._particle in driver.undiscovered:
-                button._unlocked = False
-                button.update()
+            button.update()
             if button.contains(mouse_x, mouse_y) and button._unlocked:
-                highlighted = button
-        if highlighted is None:
+                hovered = button
+        if hovered is None:
             return
 
         font = pygame.font.Font(FONT_PATH, 11)
-        label = font.render(f"{highlighted._particle.name}", True, (255, 255, 255), (0, 0, 0))
+        label = font.render(f"{hovered._particle.name}", True, (255, 255, 255), (0, 0, 0))
         x_offset, y_offset = 15, 10
         self._surface.blit(label, (mouse_x + x_offset, mouse_y - y_offset))
 
@@ -71,7 +69,7 @@ class ElementMenu:
             return False
         return True
 
-    def create_section(self, surface, x, y, width, title, elements):
+    def create_section(self, surface, x, y, width, title, elements, create):
         t = self.FONT.render(title, True, self.FONT_COLOR)
         surface.blit(t, (x, y))
 
@@ -79,7 +77,9 @@ class ElementMenu:
         top = y + t.get_height() + self.MARGIN/2
 
         for e in elements:
-            self.element_buttons.append(self.ElementButton(surface, left, top, self.BUTTON_SIZE, self.BUTTON_SIZE, e, self._mode))
+            if create:
+                self.element_buttons.append(self.ElementButton(surface, left, top, self.BUTTON_SIZE,
+                                                               self.BUTTON_SIZE, e, self._mode))
             left += self.BUTTON_SIZE + self.MARGIN
             if left + self.BUTTON_SIZE > x + width:
                 left = x
@@ -87,11 +87,13 @@ class ElementMenu:
 
         return top + self.BUTTON_SIZE - self._y
 
-    def discovery_demo(self):
+    def discovery_init(self, undiscovered):
         for button in self.element_buttons:
-            if button.get_element().name == "steam":
+            if button.get_element().name in undiscovered:
                 button._unlocked = False
-                button.update()
+            else:
+                button._unlocked = True
+            button.update()
 
     class ElementButton:
         ACTIVE_COLOR = (255, 0, 0)
