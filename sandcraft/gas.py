@@ -9,6 +9,7 @@ class Gas(Particle):
             self,
             col, row,
             vel_x, vel_y,
+            acc_x, acc_y,
             temp, temp_freeze, temp_boil,
             density,
             color,
@@ -18,6 +19,7 @@ class Gas(Particle):
         super().__init__(
             col, row,
             vel_x, vel_y,
+            acc_x, acc_y,
             temp, temp_freeze, temp_boil,
             density,
             color,
@@ -28,11 +30,11 @@ class Gas(Particle):
         self._lifespan = pygame.time.get_ticks() + 3000
         self._remaining = 3000
 
-
     def clone(self, col, row):
         return Gas(
             col, row,
             self._vel_x, self._vel_y,
+            self._acc_x, self._acc_y,
             self._temp, self._temp_freeze, self._temp_boil,
             self._density,
             self._color,
@@ -56,13 +58,15 @@ class Gas(Particle):
         else:
             self._vel_x = random.randrange(min_vel_x, max_vel_x + 1)
 
-        pos = (self._col, self._row)
+        self._update_vel()
 
-        next_x = self._col + self._vel_x
-        next_y = self._row + self._vel_y
-        next_pos = (next_x, next_y)
+        pos_path = self._get_positions_in_path(grid)
 
-        if grid.is_in_bounds(next_pos):
+        if len(pos_path) == 0:
+            self._needs_update = False
+
+        for next_pos in pos_path:
+            pos = (self._col, self._row)
             if grid.exists(next_pos) is False:
                 self._force_update_near(grid)
                 grid.swap(pos, next_pos)
@@ -83,7 +87,8 @@ class Gas(Particle):
                         particle._update_temp(particle, oldtemp)
 
                     # Burning
-                    if (particle.name == "powder" or particle.name == "wood") and (particle._temp_freeze <= particle._temp):
+                    if (particle.name == "powder" or particle.name == "wood") and (
+                            particle._temp_freeze <= particle._temp):
                         oldtemp = particle._temp
                         particle._melt(driver, grid, particle_data.template_fire.clone(particle._col, particle._row))
                         particle._update_temp(particle, oldtemp)
@@ -96,17 +101,17 @@ class Gas(Particle):
                     pos_left = (self._col - 1, self._row)
                     pos_right = (self._col + 1, self._row)
 
-                    can_go_left = grid.is_in_bounds(pos_left)           \
-                        and grid.exists(pos_left) is False              \
-                        or grid.is_in_bounds(pos_left)                  \
-                        and grid.exists(pos_left)                       \
-                        and self._density > grid.get(pos_left).density
+                    can_go_left = grid.is_in_bounds(pos_left) \
+                                  and grid.exists(pos_left) is False \
+                                  or grid.is_in_bounds(pos_left) \
+                                  and grid.exists(pos_left) \
+                                  and self._density > grid.get(pos_left).density
 
-                    can_go_right = grid.is_in_bounds(pos_right)         \
-                        and grid.exists(pos_right) is False             \
-                        or grid.is_in_bounds(pos_right)                 \
-                        and grid.exists(pos_right)                      \
-                        and self._density > grid.get(pos_right).density
+                    can_go_right = grid.is_in_bounds(pos_right) \
+                                   and grid.exists(pos_right) is False \
+                                   or grid.is_in_bounds(pos_right) \
+                                   and grid.exists(pos_right) \
+                                   and self._density > grid.get(pos_right).density
 
                     min_vel_x = -1 if can_go_left else 0
                     max_vel_x = 1 if can_go_right else 0
@@ -119,8 +124,7 @@ class Gas(Particle):
 
                         self._force_update_near(grid)
                         grid.swap(pos, next_pos)
-        else:
-            self._needs_update = False
+                break
 
     def save_lifespan(self):
         self._remaining = self._lifespan - pygame.time.get_ticks()

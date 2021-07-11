@@ -1,4 +1,6 @@
 import abc
+import math
+
 import pygame
 from .config import PARTICLE_SIZE
 
@@ -8,6 +10,7 @@ class Particle(metaclass=abc.ABCMeta):
             self,
             col, row,
             vel_x, vel_y,
+            acc_x, acc_y,
             temp, temp_freeze, temp_boil,
             density,
             color,
@@ -19,6 +22,8 @@ class Particle(metaclass=abc.ABCMeta):
         self._row = row
         self._vel_x = vel_x
         self._vel_y = vel_y
+        self._acc_x = acc_x
+        self._acc_y = acc_y
         self._temp = temp
         self._temp_freeze = temp_freeze
         self._temp_boil = temp_boil
@@ -113,9 +118,76 @@ class Particle(metaclass=abc.ABCMeta):
             particle.force_update()
 
     """
+        _update_vel updates the current velocity according to the acceleration.
+    """
+    def _update_vel(self):
+        self._vel_x += self._acc_x
+        self._vel_y += self._acc_y
+
+    """
+        _get_particles_in_path returns a list of particles that have possible collisions upon the next position update.
+    """
+    def _get_particles_in_path(self, grid):
+        in_path = []
+
+        positions_in_path_list = self._get_positions_in_path(grid)
+
+        for pos in positions_in_path_list:
+            if grid.exists(pos):
+                in_path.append(grid.get(pos))
+
+        return in_path
+
+    """
+        _get_positions_in_path returns a list of positions that have possible collisions upon the next position update.
+    """
+    def _get_positions_in_path(self, grid):
+        in_path = []
+
+        probe_x = self._col
+        probe_y = self._row
+        final_x = self._col + self._true_vel_x()
+        final_y = self._row + self._true_vel_y()
+
+        if final_x < grid.left:
+            final_x = grid.left
+        elif final_x >= grid.right:
+            final_x = grid.right - 1
+
+        if final_y < grid.top:
+            final_y = grid.top
+        elif final_y >= grid.bottom:
+            final_y = grid.bottom - 1
+
+        step_x = -1 if probe_x > final_x else 1
+        step_y = -1 if probe_y > final_y else 1
+
+        while probe_x != final_x or probe_y != final_y:
+            if probe_x != final_x:
+                probe_x += step_x
+
+            if probe_y != final_y:
+                probe_y += step_y
+
+            in_path.append((probe_x, probe_y))
+
+        return in_path
+
+    """
+        _true_vel_x returns the value that the col will be updated by every tick (conversion from float to int)
+    """
+    def _true_vel_x(self):
+        return int(math.floor(self._vel_x))
+
+    """
+        _true_vel_y returns the value that the row will be updated by every tick (conversion from float to int)
+    """
+    def _true_vel_y(self):
+        return int(math.floor(self._vel_y))
+
+    """
         _update_temp changes the temperature of the particle, for collision purposes
     """
-
     def _update_temp(self, grid, new_temp):
         self._temp = new_temp
 

@@ -131,3 +131,19 @@ class Grid:
     def __push_if_able(self, target_list, pos):
         if self.is_in_bounds_and_exists(pos):
             target_list.append(self.get(pos))
+
+    @property
+    def left(self):
+        return self.__left
+
+    @property
+    def right(self):
+        return self.__right
+
+    @property
+    def top(self):
+        return self.__top
+
+    @property
+    def bottom(self):
+        return self.__bottom

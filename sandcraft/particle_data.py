@@ -1,16 +1,17 @@
-from .solid import Solid
-from .liquid import Liquid
-from .gas import Gas
-from .fixed import Fixed
+from . import solid
+from . import liquid
+from . import gas
+from . import fixed
 
 
 """
     Template particles that can be used for the Painter, or elsewhere.
 """
 
-template_sand = Solid(
+template_sand = solid.Solid(
                     0, 0,                   # position
-                    0, 1,                   # velocity
+                    0.0, 1.0,               # velocity
+                    0.0, 0.0,               # acceleration
                     20, 1000, 2230,         # temperature (temp, freeze, boil)
                     1.6,                    # density
                     (255, 255, 0),          # color
@@ -18,9 +19,10 @@ template_sand = Solid(
                     0,                      # flammability
                     "solid")                # state (solid, liquid, gas, fixed)
 
-template_water = Liquid(
+template_water = liquid.Liquid(
                     0, 0,                   # position
-                    0, 1,                   # velocity
+                    0.0, 1.0,               # velocity
+                    0.0, 0.0,               # acceleration
                     20, 0, 100,             # temperature
                     1.0,                    # density
                     (0, 0, 255),            # color
@@ -28,9 +30,10 @@ template_water = Liquid(
                     0,                      # flammability
                     "liquid")               # state
 
-template_lava = Liquid(
+template_lava = liquid.Liquid(
                     0, 0,                   # position
-                    0, 1,                   # velocity
+                    0.0, 1.0,               # velocity
+                    0.0, 0.0,               # acceleration
                     2000, 800, 10000,       # temperature
                     3.0,                    # density
                     (153, 0, 0),            # color
@@ -38,9 +41,10 @@ template_lava = Liquid(
                     0,                      # flammability
                     "liquid")               # state
 
-template_steam = Gas(
+template_steam = gas.Gas(
                     0, 0,                   # position
-                    0, -1,                  # velocity
+                    0.0, -1.0,              # velocity
+                    0.0, 0.0,               # acceleration
                     10, -100, 10000,        # temperature
                     0.5,                    # density
                     (125, 125, 125),        # color
@@ -48,9 +52,10 @@ template_steam = Gas(
                     0.95,                   # flammability
                     "gas")                  # state
 
-template_wood = Fixed(
+template_wood = fixed.Fixed(
                     0, 0,                   # position
-                    0, 0,                   # velocity
+                    0.0, 0.0,               # velocity
+                    0.0, 0.0,               # acceleration
                     20, 400, 7000,          # temperature
                     5.0,                    # density
                     (160, 82, 45),          # color
@@ -58,9 +63,10 @@ template_wood = Fixed(
                     0.2,                    # flammability
                     "fixed")                # state
 
-template_metal = Fixed(
+template_metal = fixed.Fixed(
                     0, 0,                   # position
-                    0, 0,                   # velocity
+                    0.0, 0.0,               # velocity
+                    0.0, 0.0,               # acceleration
                     20, 1200, 10000,        # temperature
                     15.0,                   # density
                     (192, 192, 192),        # color
@@ -68,19 +74,21 @@ template_metal = Fixed(
                     0.1,                    # flammability
                     "fixed")                # state
 
-template_basalt = Fixed(
+template_basalt = fixed.Fixed(
                     0, 0,                   # position
-                    0, 0,                   # velocity
+                    0.0, 0.0,               # velocity
+                    0.0, 0.0,               # acceleration
                     600, 1500, 800,         # temperature
                     15.0,                   # density
                     (53, 72, 96),           # color
                     "basalt",               # name
-                    0.1,                      # flammability
+                    0.1,                    # flammability
                     "fixed")                # state
 
-template_fire = Gas(
+template_fire = gas.Gas(
                     0, 0,                   # position
-                    0, -1,                  # velocity
+                    0.0, -1.0,              # velocity
+                    0.0, 0.0,               # acceleration
                     800, -300, 10000,       # temperature
                     0.5,                    # density
                     (201, 75, 44),          # color
@@ -89,9 +97,10 @@ template_fire = Gas(
                     "gas")                  # state
 
 
-template_powder = Solid(
+template_powder = solid.Solid(
                     0, 0,                   # position
-                    0, 1,                   # velocity
+                    0.0, 1.0,               # velocity
+                    0.0, 0.0,               # acceleration
                     20, 300, 2230,          # temperature (temp, freeze, boil)
                     1,                      # density
                     (249, 218, 159),        # color
@@ -99,9 +108,10 @@ template_powder = Solid(
                     0.9,                    # flammability
                     "solid")                # state
 
-template_ice = Fixed(
+template_ice = fixed.Fixed(
                     0, 0,                   # position
-                    0, 0,                   # velocity
+                    0.0, 0.0,               # velocity
+                    0.0, 0.0,               # acceleration
                     -80, 0, 100,            # temperature
                     1,                      # density
                     (47, 230, 239),         # color
@@ -109,9 +119,10 @@ template_ice = Fixed(
                     0,                      # flammability
                     "fixed")                # state
 
-template_oil = Liquid(
+template_oil = liquid.Liquid(
                     0, 0,                   # position
-                    0, 1,                   # velocity
+                    0.0, 1.0,               # velocity
+                    0.0, 0.0,               # acceleration
                     20, -100, 100,          # temperature
                     0.3,                    # density
                     (86, 63, 43),           # color
@@ -119,9 +130,10 @@ template_oil = Liquid(
                     0.98,                   # flammability
                     "liquid")               # state
 
-template_fog = Gas(
+template_fog = gas.Gas(
                     0, 0,                   # position
-                    0, 0,                   # velocity
+                    0.0, 0.0,               # velocity
+                    0.0, 0.0,               # acceleration
                     20, -100, 100,          # temperature
                     0.3,                    # density
                     (218, 234, 232),        # color
@@ -129,9 +141,10 @@ template_fog = Gas(
                     0,                      # flammability
                     "gas")                  # state
 
-template_stone = Solid(
+template_stone = solid.Solid(
                     0, 0,                   # position
-                    0, 1,                   # velocity
+                    0.0, 1.0,               # velocity
+                    0.0, 0.0,               # acceleration
                     20, 1100, 2230,         # temperature (temp, freeze, boil)
                     20,                     # density
                     (137, 137, 137),        # color
@@ -139,9 +152,10 @@ template_stone = Solid(
                     0,                      # flammability
                     "solid")                # state
                     
-template_generator = Fixed(
+template_generator = fixed.Fixed(
                     0, 0,                   # position
-                    0, 0,                   # velocity
+                    0.0, 0.0,               # velocity
+                    0.0, 0.0,               # acceleration
                     20, -100, 1000,         # temperature
                     15.0,                   # density
                     (0, 153, 153),          # color

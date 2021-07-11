@@ -1,11 +1,13 @@
 from .particle import Particle
 from . import particle_data
 
+
 class Solid(Particle):
     def __init__(
             self,
             col, row,
             vel_x, vel_y,
+            acc_x, acc_y,
             temp, temp_freeze, temp_boil,
             density,
             color,
@@ -15,6 +17,7 @@ class Solid(Particle):
         super().__init__(
             col, row,
             vel_x, vel_y,
+            acc_x, acc_y,
             temp, temp_freeze, temp_boil,
             density,
             color,
@@ -26,6 +29,7 @@ class Solid(Particle):
         return Solid(
             col, row,
             self._vel_x, self._vel_y,
+            self._acc_x, self._acc_y,
             self._temp, self._temp_freeze, self._temp_boil,
             self._density,
             self._color,
@@ -37,13 +41,16 @@ class Solid(Particle):
         if self._needs_update is False:
             return
 
-        pos = (self._col, self._row)
+        self._update_vel()
 
-        next_x = self._col + self._vel_x
-        next_y = self._row + self._vel_y
-        next_pos = (next_x, next_y)
+        pos_path = self._get_positions_in_path(grid)
 
-        if grid.is_in_bounds(next_pos):
+        if len(pos_path) == 0:
+            self._needs_update = False
+
+        for next_pos in pos_path:
+            pos = (self._col, self._row)
+
             if grid.exists(next_pos) is False:
                 self._force_update_near(grid)
                 grid.swap(pos, next_pos)
@@ -54,10 +61,10 @@ class Solid(Particle):
                 near_list = grid.get_near((self._col, self._row))
                 for particle in near_list:
 
-                    temp_diff = (self._temp - particle._temp) / 50
+                    temp_diff = (self._temp - particle.temp) / 50
                     if particle.name == "fire":
                         temp_diff = temp_diff * self._flammability
-                    particle._update_temp(particle, particle._temp + temp_diff)
+                    particle._update_temp(particle, particle.temp + temp_diff)
                     self._update_temp(self, self._temp - temp_diff)
 
                 # Burning
@@ -76,8 +83,8 @@ class Solid(Particle):
                     self._force_update_near(grid)
                     grid.swap(pos, next_pos)
                 else:
-                    left_pos = (self._col - 1, self._row + self._vel_y)
-                    right_pos = (self._col + 1, self._row + self._vel_y)
+                    left_pos = (self._col - 1, self._row + 1)
+                    right_pos = (self._col + 1, self._row + 1)
 
                     left_in_bounds = grid.is_in_bounds(left_pos)
                     right_in_bounds = grid.is_in_bounds(right_pos)
@@ -99,5 +106,4 @@ class Solid(Particle):
 
                     else:
                         self._needs_update = False
-        else:
-            self._needs_update = False
+                break

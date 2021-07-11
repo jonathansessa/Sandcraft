@@ -8,6 +8,7 @@ class Liquid(Particle):
             self,
             col, row,
             vel_x, vel_y,
+            acc_x, acc_y,
             temp, temp_freeze, temp_boil,
             density,
             color,
@@ -17,6 +18,7 @@ class Liquid(Particle):
         super().__init__(
             col, row,
             vel_x, vel_y,
+            acc_x, acc_y,
             temp, temp_freeze, temp_boil,
             density,
             color,
@@ -28,6 +30,7 @@ class Liquid(Particle):
         return Liquid(
             col, row,
             self._vel_x, self._vel_y,
+            self._acc_x, self._acc_y,
             self._temp, self._temp_freeze, self._temp_boil,
             self._density,
             self._color,
@@ -39,18 +42,17 @@ class Liquid(Particle):
         if self._needs_update is False:
             return
 
-        pos = (self._col, self._row)
+        pos_path = self._get_positions_in_path(grid)
 
-        next_x = self._col + self._vel_x
-        next_y = self._row + self._vel_y
-        next_pos = (next_x, next_y)
+        if len(pos_path) == 0:
+            self._needs_update = False
 
-        if grid.is_in_bounds(next_pos):
+        for next_pos in pos_path:
+            pos = (self._col, self._row)
             if grid.exists(next_pos) is False:
                 self._force_update_near(grid)
                 grid.swap(pos, next_pos)
             else:
-
                 collider = grid.get(next_pos)
 
                 # Heat transfer
@@ -128,5 +130,4 @@ class Liquid(Particle):
 
                         self._force_update_near(grid)
                         grid.swap(pos, next_pos)
-        else:
-            self._needs_update = False
+                break
