@@ -19,7 +19,7 @@ def main():
     driver = Driver(mode, element_menu, display)
 
     if mode == "DISCOVERY":
-        undiscovered = ["basalt", "steam"]
+        undiscovered = ["basalt", "steam", "fire", "water"]
         element_menu.discovery_init(undiscovered)
         driver.undiscovered.extend(undiscovered)
 

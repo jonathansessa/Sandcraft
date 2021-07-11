@@ -333,7 +333,7 @@ class Driver:
                                     click = True
                                 if event.type == pygame.KEYDOWN:
                                     click = True
-                        break
+                        return
 
     def save_state(self):
         for particle in self.__particles:

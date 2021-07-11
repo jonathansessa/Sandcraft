@@ -58,7 +58,7 @@ class ElementMenu:
             return
 
         font = pygame.font.Font(FONT_PATH, 11)
-        label = font.render(f"{hovered._particle.name}", True, (255, 255, 255), (0, 0, 0))
+        label = font.render(f"{hovered._particle.name.upper()}", True, (255, 255, 255), (0, 0, 0))
         x_offset, y_offset = 15, 10
         self._surface.blit(label, (mouse_x + x_offset, mouse_y - y_offset))
 
