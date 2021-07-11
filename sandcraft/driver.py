@@ -17,13 +17,13 @@ def print_state_message(screen, text):
     clear_surf = pygame.Surface((SANDBOX_WIDTH, (WINDOW_HEIGHT - SANDBOX_HEIGHT) / 2))
     clear_surf.fill(BG_COLOR)
     screen.blit(clear_surf, clear_surf.get_rect().move(
-        (SANDBOX_WIDTH / 2 - clear_surf.get_width() / 2, WINDOW_HEIGHT - 2 * SANDBOX_Y)))
+        (SANDBOX_WIDTH / 2 - clear_surf.get_width() / 2, WINDOW_HEIGHT - 1.25 * SANDBOX_Y)))
 
     # Print new message
     print_font = pygame.font.Font(FONT_PATH, 20)
     text_rect = print_font.render(text, False, (255, 255, 255))
     screen.blit(text_rect, text_rect.get_rect().move(
-        (SANDBOX_WIDTH / 2 - text_rect.get_width() / 2, WINDOW_HEIGHT - 2 * SANDBOX_Y)))
+        (SANDBOX_WIDTH / 2 - text_rect.get_width() / 2, WINDOW_HEIGHT - 1.25 * SANDBOX_Y)))
 
 
 class Driver:
@@ -302,41 +302,38 @@ class Driver:
         for particle in self.__particles:
             particle.render(screen)
 
-            if self._mode == "DISCOVERY" and len(self.undiscovered) != 0:
-                if particle.name == "steam":
-                    for e in self.__element_menu.element_buttons:
-                        if e.get_element() == template_steam:
-                            e._unlocked = True
-                            e.update()
-                            try:
-                                for elem in self.undiscovered:
-                                    if elem.name == "steam":
-                                        self.undiscovered.remove(elem)
-                                # self.undiscovered.remove(template_steam)
-                            except ValueError:
-                                continue
+            if self._mode == "DISCOVERY" and len(self.undiscovered) > 0 and particle.name in self.undiscovered:
+                for e in self.__element_menu.element_buttons:
+                    if e.get_element().name == particle.name:
+                        e._unlocked = True
+                        e.update()
+                        for elem in self.undiscovered:
+                            if elem == particle.name:
+                                self.undiscovered.remove(elem)
+                                break
 
-                            click = False
-                            while not click:
-                                font = pygame.font.Font(FONT_PATH, 30)
-                                alert = font.render("STEAM DISCOVERED!", False, (255, 255, 255))
-                                alert_rect = alert.get_rect()
-                                alert_rect.center = (SANDBOX_WIDTH / 2, SANDBOX_HEIGHT / 2)
-                                screen.blit(alert, alert_rect)
+                        click = False
+                        while not click:
+                            font = pygame.font.Font(FONT_PATH, 30)
+                            alert = font.render("%s DISCOVERED!" % particle.name.upper(), False, (255, 255, 255))
+                            alert_rect = alert.get_rect()
+                            alert_rect.center = (SANDBOX_WIDTH / 2, SANDBOX_HEIGHT / 2)
+                            screen.blit(alert, alert_rect)
 
-                                font2 = pygame.font.Font(FONT_PATH, 18)
-                                alert2 = font2.render("(Click to Continue)", False, (255, 255, 255))
-                                alert2_rect = alert2.get_rect()
-                                alert2_rect.center = (SANDBOX_WIDTH / 2, (SANDBOX_HEIGHT / 2) + 50)
-                                screen.blit(alert2, alert2_rect)
+                            font2 = pygame.font.Font(FONT_PATH, 18)
+                            alert2 = font2.render("(Click to Continue)", False, (255, 255, 255))
+                            alert2_rect = alert2.get_rect()
+                            alert2_rect.center = (SANDBOX_WIDTH / 2, (SANDBOX_HEIGHT / 2) + 50)
+                            screen.blit(alert2, alert2_rect)
 
-                                pygame.display.update()
+                            pygame.display.update()
 
-                                for event in pygame.event.get():
-                                    if event.type == pygame.MOUSEBUTTONDOWN:
-                                        click = True
-                                    if event.type == pygame.KEYDOWN:
-                                        click = True
+                            for event in pygame.event.get():
+                                if event.type == pygame.MOUSEBUTTONDOWN:
+                                    click = True
+                                if event.type == pygame.KEYDOWN:
+                                    click = True
+                        return
 
     def save_state(self):
         for particle in self.__particles:
@@ -380,12 +377,15 @@ class Driver:
                 else:
                     self.undiscovered = []
 
+                self.__element_menu.discovery_init(self.undiscovered)
+                '''
                 for e in self.__element_menu.element_buttons:
                     if e.get_element().name in [element.name for element in self.undiscovered]:
                         e._unlocked = False
                     else:
                         e._unlocked = True
                     e.update()
+                '''
 
                 self._mode = data['mode']
 

@@ -15,11 +15,13 @@ def main():
 
     # Create and define screen regions
     (display, sandbox, element_menu, tool_menu) = screen.init_screen(mode)
+
     driver = Driver(mode, element_menu, display)
 
     if mode == "DISCOVERY":
-        element_menu.discovery_demo()
-        driver.undiscovered.append(template_steam)
+        undiscovered = ["basalt", "steam", "fire", "water"]
+        element_menu.discovery_init(undiscovered)
+        driver.undiscovered.extend(undiscovered)
 
     while 1:
         # Blackout entire sandbox (should optimize in the future)
@@ -62,8 +64,7 @@ def main():
             pygame.mouse.set_visible(False)
             driver.draw_tool_outline(pygame.mouse.get_pos(), sandbox, display)
         else:
-            if driver.get_tool() == "INSPECT":
-                element_menu.draw_tooltip(driver, pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
+            element_menu.draw_tooltip(driver, pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
             pygame.mouse.set_visible(True)
 
         # Update and show FPS (used for debugging)
