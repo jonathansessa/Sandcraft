@@ -1,4 +1,3 @@
-from .config import *
 from .element_menu import *
 from .tool_menu import *
 

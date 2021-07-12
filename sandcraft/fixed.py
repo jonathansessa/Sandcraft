@@ -1,4 +1,3 @@
-from . import liquid
 from .particle import Particle
 from . import particle_data
 
@@ -8,6 +7,7 @@ class Fixed(Particle):
             self,
             col, row,
             vel_x, vel_y,
+            acc_x, acc_y,
             temp, temp_freeze, temp_boil,
             density,
             color,
@@ -17,6 +17,7 @@ class Fixed(Particle):
         super().__init__(
             col, row,
             vel_x, vel_y,
+            acc_x, acc_y,
             temp, temp_freeze, temp_boil,
             density,
             color,
@@ -28,6 +29,7 @@ class Fixed(Particle):
         return Fixed(
             col, row,
             self._vel_x, self._vel_y,
+            self._acc_x, self._acc_y,
             self._temp, self._temp_freeze, self._temp_boil,
             self._density,
             self._color,
@@ -37,8 +39,8 @@ class Fixed(Particle):
 
     def update_on_tick(self, driver, grid):
         if self.name == "Water Generator":
-            if not grid.exists((self.col+1, self.row)):
-                driver.add(particle_data.template_water.clone(self.col+1, self.row))
+            if not grid.exists((self.col + 1, self.row)):
+                driver.add(particle_data.template_water.clone(self.col + 1, self.row))
 
         if self._needs_update is False:
             return
@@ -68,7 +70,7 @@ class Fixed(Particle):
             self._update_temp(self, oldTemp)
 
         # Wood burns
-        if self.name == "wood"  and self._temp_freeze <= self._temp:
+        if self.name == "wood" and self._temp_freeze <= self._temp:
             oldTemp = self._temp
             self._melt(driver, grid, particle_data.template_fire.clone(self._col, self._row))
             self._update_temp(self, oldTemp)
@@ -78,6 +80,5 @@ class Fixed(Particle):
             oldtemp = self._temp
             self._melt(driver, grid, particle_data.template_lava.clone(self._col, self._row))
             self._update_temp(self, oldtemp)
-
 
         self._needs_update = False

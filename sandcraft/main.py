@@ -1,6 +1,4 @@
-import pygame
 from . import screen
-from .particle_data import template_steam
 from .start_menu import *
 from .driver import Driver
 from .config import TOMENU_EVENT_TYPE

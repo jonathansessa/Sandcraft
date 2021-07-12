@@ -1,7 +1,4 @@
-import os
 import pickle
-import pygame
-import math
 import tkinter as tk
 from tkinter import filedialog
 from .config import *
