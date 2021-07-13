@@ -278,8 +278,11 @@ class Driver:
         for particle in self.__particles:
             particle.update_on_tick(self, self.__grid)
 
-            if particle.is_live is False:
-                self.__particles.remove(particle)
+            if particle.is_live is False or self.__grid.exists([particle.col, particle.row]) is False:
+                try:
+                    self.__particles.remove(particle)
+                except ValueError:
+                    pass
 
             if particle.name == "Water Generator":
                 particle.force_update()
@@ -375,14 +378,6 @@ class Driver:
                     self.undiscovered = []
 
                 self.__element_menu.discovery_init(self.undiscovered)
-                '''
-                for e in self.__element_menu.element_buttons:
-                    if e.get_element().name in [element.name for element in self.undiscovered]:
-                        e._unlocked = False
-                    else:
-                        e._unlocked = True
-                    e.update()
-                '''
 
                 self._mode = data['mode']
 
