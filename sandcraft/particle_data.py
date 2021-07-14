@@ -173,11 +173,34 @@ template_generator = fixed.Fixed(
                     0,                      # flammability
                     "fixed")                # state
 
+
+template_void = fixed.Fixed(
+                    0, 0,                   # position
+                    0.0, 0.0,               # velocity
+                    0.0, 0.0,               # acceleration
+                    20, -100, 1000,         # temperature
+                    15.0,                   # density
+                    (3, 0, 71),             # color
+                    "void",                 # name
+                    0,                      # flammability
+                    "fixed")                # state
+
+template_acid = liquid.Liquid(
+                    0, 0,                   # position
+                    0.0, 1.0,               # velocity
+                    0.0, 0.0,               # acceleration
+                    20, -100, 100,          # temperature
+                    0.5,                    # density
+                    (29, 224, 48),          # color
+                    "acid",                 # name
+                    0,                      # flammability
+                    "liquid")               # state
+
 # Particle dictionary used to create particle selection tool
 ELEMENTS = {
     "FIXED": [template_wood, template_metal, template_basalt, template_ice],
     "SOLIDS": [template_sand, template_powder, template_stone, template_snow],
-    "LIQUIDS": [template_water, template_lava, template_oil],
+    "LIQUIDS": [template_water, template_lava, template_oil, template_acid],
     "GASES": [template_steam, template_fire, template_fog],
-    "SPECIAL": [template_generator]
+    "SPECIAL": [template_generator, template_void]
 }

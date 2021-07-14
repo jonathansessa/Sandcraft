@@ -57,6 +57,10 @@ class Solid(Particle):
             else:
                 collider = grid.get(next_pos)
 
+                if self.name != "void" and collider.name == "void":
+                    driver.delete(self)
+                    break
+
                 # Heat transfer
                 near_list = grid.get_near((self._col, self._row))
                 for particle in near_list:

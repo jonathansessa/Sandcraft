@@ -55,6 +55,15 @@ class Liquid(Particle):
             else:
                 collider = grid.get(next_pos)
 
+                if self.name != "void" and collider.name == "void":
+                    driver.delete(self)
+                    break
+
+                if self.name == "acid" and collider.name != "acid":
+                    driver.delete(collider)
+                    driver.delete(self)
+                    break
+
                 # Heat transfer
                 near_list = grid.get_near((self._col, self._row))
                 for particle in near_list:
