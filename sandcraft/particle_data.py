@@ -96,7 +96,6 @@ template_fire = gas.Gas(
                     0,                      # flammability
                     "gas")                  # state
 
-
 template_powder = solid.Solid(
                     0, 0,                   # position
                     0.0, 1.0,               # velocity
@@ -106,6 +105,17 @@ template_powder = solid.Solid(
                     (249, 218, 159),        # color
                     "powder",               # name
                     0.9,                    # flammability
+                    "solid")                # state
+
+template_snow = solid.Solid(
+                    0, 0,                   # position
+                    0.0, 1.0,               # velocity
+                    0.0, 0.0,               # acceleration
+                    -30, 0, 100,            # temperature (temp, freeze, boil)
+                    .9,                     # density
+                    (255, 250, 250),        # color
+                    "snow",                 # name
+                    0,                      # flammability
                     "solid")                # state
 
 template_ice = fixed.Fixed(
@@ -166,7 +176,7 @@ template_generator = fixed.Fixed(
 # Particle dictionary used to create particle selection tool
 ELEMENTS = {
     "FIXED": [template_wood, template_metal, template_basalt, template_ice],
-    "SOLIDS": [template_sand, template_powder, template_stone],
+    "SOLIDS": [template_sand, template_powder, template_stone, template_snow],
     "LIQUIDS": [template_water, template_lava, template_oil],
     "GASES": [template_steam, template_fire, template_fog],
     "SPECIAL": [template_generator]

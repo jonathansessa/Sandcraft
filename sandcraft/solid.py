@@ -79,6 +79,12 @@ class Solid(Particle):
                     self._melt(driver, grid, particle_data.template_lava.clone(self._col, self._row))
                     self._update_temp(self, oldtemp)
 
+                # snow melts into water
+                if self.name == "snow" and self._temp_freeze <= self._temp:
+                    oldtemp = self._temp
+                    self._melt(driver, grid, particle_data.template_water.clone(self._col, self._row))
+                    self._update_temp(self, oldtemp)
+
                 if self._density > collider.density:
                     self._force_update_near(grid)
                     grid.swap(pos, next_pos)
