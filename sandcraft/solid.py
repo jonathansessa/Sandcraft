@@ -68,26 +68,26 @@ class Solid(Particle):
                     temp_diff = (self._temp - particle.temp) / 50
                     if particle.name == "fire":
                         temp_diff = temp_diff * self._flammability
-                    particle._update_temp(particle, particle.temp + temp_diff)
-                    self._update_temp(self, self._temp - temp_diff)
+                    particle._update_temp(particle.temp + temp_diff)
+                    self._update_temp(self._temp - temp_diff)
 
                 # Burning
                 if (self.name == "powder" or self.name == "wood") and (self._temp_freeze <= self._temp):
                     oldtemp = self._temp
                     self._melt(driver, grid, particle_data.template_fire.clone(self._col, self._row))
-                    self._update_temp(self, oldtemp)
+                    self._update_temp(oldtemp)
 
                 # Molten stone or sand -> lava
                 if (self.name == "stone" or self.name == "sand") and self._temp_freeze <= self._temp:
                     oldtemp = self._temp
                     self._melt(driver, grid, particle_data.template_lava.clone(self._col, self._row))
-                    self._update_temp(self, oldtemp)
+                    self._update_temp(oldtemp)
 
                 # snow melts into water
                 if self.name == "snow" and self._temp_freeze <= self._temp:
                     oldtemp = self._temp
                     self._melt(driver, grid, particle_data.template_water.clone(self._col, self._row))
-                    self._update_temp(self, oldtemp)
+                    self._update_temp(oldtemp)
 
                 if self._density > collider.density:
                     self._force_update_near(grid)
