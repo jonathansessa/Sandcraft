@@ -33,6 +33,10 @@ class Grid:
     def emplace(self, particle):
         self.__cells[particle.row][particle.col] = particle
 
+    def emplace_list(self, particle_list):
+        for particle in particle_list:
+            self.emplace(particle)
+
     def remove(self, particle):
         self.__cells[particle.row][particle.col] = None
 

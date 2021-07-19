@@ -14,7 +14,7 @@ class Painter:
             for y in range(mouse_row, mouse_row + driver.get_size()):
                 if grid.is_in_bounds([x, y]):
                     if grid.exists([x, y]) is False and driver.get_tool() == "ADD":
-                        driver.add(self.__temp.clone(x, y))
+                        self.__temp.clone(x, y).emplace(driver)
                     elif grid.exists([x, y]) is True and driver.get_tool() == "DELETE":
                         driver.delete(grid.get([x, y]))
                     elif grid.exists([x, y]) is True and driver.get_tool() == "ERASE":

@@ -1,11 +1,10 @@
 import abc
-import math
-
 import pygame
 from .config import PARTICLE_SIZE
+from .grid_object import GridObject
 
 
-class Particle(metaclass=abc.ABCMeta):
+class Particle(GridObject, metaclass=abc.ABCMeta):
     def __init__(
             self,
             col, row,
@@ -18,22 +17,19 @@ class Particle(metaclass=abc.ABCMeta):
             flammability,
             state):
 
-        self._col = col
-        self._row = row
-        self._vel_x = vel_x
-        self._vel_y = vel_y
-        self._acc_x = acc_x
-        self._acc_y = acc_y
-        self._temp = temp
-        self._temp_freeze = temp_freeze
-        self._temp_boil = temp_boil
-        self._density = density
-        self._color = color
-        self._name = name
+        super().__init__(
+            col, row,
+            vel_x, vel_y,
+            acc_x, acc_y,
+            temp, temp_freeze, temp_boil,
+            density,
+            color,
+            name,
+            flammability,
+            state)
+
         self._is_live = True
         self._needs_update = True
-        self._flammability = flammability
-        self._state = state
 
     """
         clone is an abstract method that is overridden by state classes deriving from Particle.
@@ -52,6 +48,9 @@ class Particle(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def update_on_tick(self, driver, grid):
         pass
+
+    def emplace(self, driver):
+        driver.add(self)
 
     """
         render draws the particle to the screen using a primitive pygame Rect
@@ -75,6 +74,9 @@ class Particle(metaclass=abc.ABCMeta):
     """
     def force_update(self):
         self._needs_update = True
+
+    def deny_update(self):
+        self._needs_update = False
 
     """
         set_pos changes the particle's current col and row in the grid
@@ -174,54 +176,19 @@ class Particle(metaclass=abc.ABCMeta):
         return in_path
 
     """
-        _true_vel_x returns the value that the col will be updated by every tick (conversion from float to int)
-    """
-    def _true_vel_x(self):
-        return int(math.floor(self._vel_x))
-
-    """
-        _true_vel_y returns the value that the row will be updated by every tick (conversion from float to int)
-    """
-    def _true_vel_y(self):
-        return int(math.floor(self._vel_y))
-
-    """
         _update_temp changes the temperature of the particle, for collision purposes
     """
-    def _update_temp(self, grid, new_temp):
+    def _update_temp(self, new_temp):
         self._temp = new_temp
 
     """
         properties (read only)
     """
-    @property
-    def col(self):
-        return self._col
-
-    @property
-    def row(self):
-        return self._row
-
-    @property
-    def density(self):
-        return self._density
 
     @property
     def is_live(self):
         return self._is_live
 
     @property
-    def color(self):
-        return self._color
-
-    @property
-    def name(self):
-        return self._name
-
-    @property
-    def state(self):
-        return self._state
-
-    @property
-    def temp(self):
-        return self._temp
+    def needs_update(self):
+        return self._needs_update
