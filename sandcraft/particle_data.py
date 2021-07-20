@@ -2,6 +2,8 @@ from . import solid
 from . import liquid
 from . import gas
 from . import fixed
+from . import basic_solid_body
+from . import ufo_solid_body
 
 
 """
@@ -196,11 +198,99 @@ template_acid = liquid.Liquid(
                     0,                      # flammability
                     "liquid")               # state
 
+template_solidbody_test = basic_solid_body.BasicSolidBody(
+    {
+        0: None,
+        1: (255, 0, 0),
+        2: (0, 255, 0),
+        3: (0, 0, 255),
+        4: (255, 255, 0),
+        5: (0, 255, 255),
+        6: (255, 0, 255)
+    },
+    [
+        [0, 0, 1, 0, 0],
+        [0, 3, 2, 3, 0],
+        [6, 5, 4, 5, 6],
+        [0, 3, 2, 3, 0],
+        [0, 0, 1, 0, 0]
+    ],
+    5, 5,
+    0, 0,
+    0.0, -1.0,
+    0.0, 0.0,
+    20, 1000, 2230,
+    1000.0,
+    (255, 0, 255),
+    "test",
+    0,
+    "solid")
+
+template_solidbody_smiley = basic_solid_body.BasicSolidBody(
+    {
+        0: None,
+        1: (255, 255, 0)
+    },
+    [
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
+        [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+        [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
+        [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+        [0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0],
+        [1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1],
+        [1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1],
+        [0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0],
+        [0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0],
+        [0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0],
+        [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
+    ],
+    16, 16,
+    0, 0,
+    0.0, 1.0,
+    0.0, 0.0,
+    20, 1000, 2230,
+    1000.0,
+    (255, 255, 0),
+    "smiley",
+    0,
+    "solid")
+
+template_ufo = ufo_solid_body.UFOSolidBody(
+    {
+        0: None,
+        1: (125, 125, 125),
+        2: (225, 225, 225),
+        3: (0, 125, 0),
+        4: (255, 255, 0)
+    },
+    [
+        [0, 0, 0, 2, 2, 2, 0, 0, 0],
+        [0, 0, 2, 2, 3, 2, 2, 0, 0],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [0, 1, 4, 1, 1, 1, 4, 1, 0]
+    ],
+    9, 4,
+    0, 0,
+    1.0, 0.0,
+    0.0, 0.0,
+    20, 1000, 2230,
+    1000.0,
+    (0, 255, 0),
+    "ufo",
+    0,
+    "solid")
+
 # Particle dictionary used to create particle selection tool
 ELEMENTS = {
     "FIXED": [template_wood, template_metal, template_basalt, template_ice],
     "SOLIDS": [template_sand, template_powder, template_stone, template_snow],
     "LIQUIDS": [template_water, template_lava, template_oil, template_acid],
     "GASES": [template_steam, template_fire, template_fog],
-    "SPECIAL": [template_generator, template_void]
+    "SPECIAL": [template_generator, template_void],
+    "SOLID BODIES": [template_solidbody_test, template_solidbody_smiley, template_ufo]
 }

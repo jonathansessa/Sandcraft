@@ -52,7 +52,7 @@ def main():
                         driver.end_oval(pygame.mouse.get_pos())
 
         # Update particle positions and apply tool (if is being used)
-        driver.update_particles(pygame.mouse, sandbox, display)
+        driver.update_particles(pygame.mouse)
 
         # Draw all particles in the sandbox
         driver.render(display)

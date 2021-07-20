@@ -26,6 +26,7 @@ def print_state_message(screen, text):
 class Driver:
     def __init__(self, mode, element_menu, display):
         self.__particles = []
+        self.__solid_bodies = []
         self.__grid = Grid()
         self.__painter = Painter(template_sand)
         self._mode = mode
@@ -53,6 +54,14 @@ class Driver:
     def add(self, particle):
         self.__particles.append(particle)
         self.__grid.emplace(particle)
+
+    def add_list(self, particle_list):
+        for particle in particle_list:
+            if particle is not None:
+                self.add(particle)
+
+    def add_solid_body(self, solid_body):
+        self.__solid_bodies.append(solid_body)
 
     def delete(self, particle):
         try:
@@ -274,7 +283,13 @@ class Driver:
                     self.add(self.__painter.get_template_particle().clone(i, j))
 
     # For each particle, update its position. Then, apply tool if active
-    def update_particles(self, mouse, sandbox, display):
+    def update_particles(self, mouse):
+        for solid_body in self.__solid_bodies:
+            if solid_body.empty():
+                self.__solid_bodies.remove(solid_body)
+            else:
+                solid_body.update_on_tick(self, self.__grid)
+
         for particle in self.__particles:
             particle.update_on_tick(self, self.__grid)
 
@@ -384,3 +399,7 @@ class Driver:
                 print_state_message(self.__display, 'Success: Loaded!')
             except:
                 print_state_message(self.__display, 'Error: %s has invalid data!' % os.path.basename(file_path))
+
+    @property
+    def grid(self):
+        return self.__grid
