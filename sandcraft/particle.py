@@ -90,21 +90,21 @@ class Particle(GridObject, metaclass=abc.ABCMeta):
         
         Freezing and melting are identical in function for now.
     """
-    def _boil(self, driver, grid, new_particle):
+    def boil(self, driver, grid, new_particle):
         self._is_live = False
         near_list = grid.get_near((self._col, self._row))
         for particle in near_list:
             particle.force_update()
         driver.add(new_particle)
 
-    def _freeze(self, driver, grid, new_particle):
+    def freeze(self, driver, grid, new_particle):
         self._is_live = False
         near_list = grid.get_near((self._col, self._row))
         for particle in near_list:
             particle.force_update()
         driver.add(new_particle)
 
-    def _melt(self, driver, grid, new_particle):
+    def melt(self, driver, grid, new_particle):
         self._is_live = False
         near_list = grid.get_near((self._col, self._row))
         for particle in near_list:
@@ -178,7 +178,7 @@ class Particle(GridObject, metaclass=abc.ABCMeta):
     """
         _update_temp changes the temperature of the particle, for collision purposes
     """
-    def _update_temp(self, new_temp):
+    def update_temp(self, new_temp):
         self._temp = new_temp
 
     """

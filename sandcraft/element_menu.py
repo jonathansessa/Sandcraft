@@ -27,7 +27,7 @@ class ElementMenu:
         sect_y = self._y
         sect_w = self._width / 2 - self.MARGIN
         for category in ELEMENTS.keys():
-            sect_h = self.create_section(self._surface, sect_x, sect_y, sect_w, category, ELEMENTS[category], create)
+            self.create_section(self._surface, sect_x, sect_y, sect_w, category, ELEMENTS[category], create)
             sect_x += sect_w + self.MARGIN
             if sect_x >= self._x + self._width:
                 sect_x = self._x
@@ -38,13 +38,13 @@ class ElementMenu:
         for b in self.element_buttons:
             if b.contains(x, y):
                 for button in self.element_buttons:
-                    button.set_inactive()
-                    if button.contains(x, y) and button._unlocked:
-                        button.set_active()
+                    button.set_active(False)
+                    if button.contains(x, y) and button.unlocked:
+                        button.set_active(True)
                         driver.set_current_element(button.get_element())
                     button.update()
 
-    def draw_tooltip(self, driver, mouse_x, mouse_y):
+    def draw_tooltip(self, mouse_x, mouse_y):
         elem_menu_rect = pygame.Rect(self._x, self._y, self._width, self._height)
         pygame.draw.rect(self._surface, BG_COLOR, elem_menu_rect)
         self.draw(False)
@@ -52,13 +52,13 @@ class ElementMenu:
         hovered = None
         for button in self.element_buttons:
             button.update()
-            if button.contains(mouse_x, mouse_y) and button._unlocked:
+            if button.contains(mouse_x, mouse_y) and button.unlocked:
                 hovered = button
         if hovered is None:
             return
 
         font = pygame.font.Font(FONT_PATH, 11)
-        label = font.render(f"{hovered._particle.name.upper()}", True, (255, 255, 255), (0, 0, 0))
+        label = font.render(f"{hovered.particle.name.upper()}", True, (255, 255, 255), (0, 0, 0))
         x_offset, y_offset = 15, 10
         self._surface.blit(label, (mouse_x + x_offset, mouse_y - y_offset))
 
@@ -79,7 +79,7 @@ class ElementMenu:
         for e in elements:
             if create:
                 self.element_buttons.append(self.ElementButton(surface, left, top, self.BUTTON_SIZE,
-                                                               self.BUTTON_SIZE, e, self._mode))
+                                                               self.BUTTON_SIZE, e))
             left += self.BUTTON_SIZE + self.MARGIN
             if left + self.BUTTON_SIZE > x + width:
                 left = x
@@ -98,7 +98,7 @@ class ElementMenu:
     class ElementButton:
         ACTIVE_COLOR = (255, 0, 0)
 
-        def __init__(self, surface, x, y, width, height, template_particle, mode):
+        def __init__(self, surface, x, y, width, height, template_particle):
             self._surface = surface
             self._x = x
             self._y = y
@@ -131,21 +131,22 @@ class ElementMenu:
 
             # If element is currently active/selected, draw a red line around button
             if self._active:
-                pygame.draw.lines(self._surface, self.ACTIVE_COLOR, True, ((self._x, self._y),
-                                                                         (self._x + self._width-1, self._y),
-                                                                         (self._x + self._width-1, self._y + self._height-1),
-                                                                         (self._x, self._y + self._height-1)))
+                pygame.draw.lines(self._surface, self.ACTIVE_COLOR, True,
+                                  ((self._x, self._y),
+                                   (self._x + self._width-1, self._y),
+                                   (self._x + self._width-1, self._y + self._height-1),
+                                   (self._x, self._y + self._height-1)))
 
             return button
 
         def get_element(self):
             return self._particle
 
-        def set_active(self):
-            self._active = True
-
-        def set_inactive(self):
-            self._active = False
+        # def set_active(self):
+        #     self._active = True
+        #
+        # def set_inactive(self):
+        #     self._active = False
 
         def get_enabled(self):
             return self._enabled
@@ -162,6 +163,22 @@ class ElementMenu:
             self._unlocked = status
 
         unlocked = property(get_lock, set_lock)
+
+        def get_active(self):
+            return self._active
+
+        def set_active(self, active):
+            self._active = active
+
+        active = property(get_active, set_active)
+
+        def get_particle(self):
+            return self._particle
+
+        def set_particle(self, particle):
+            self._particle = particle
+
+        particle = property(get_particle, set_particle)
 
         def contains(self, x, y):
             if x < self._x or self._x + self._width < x:
