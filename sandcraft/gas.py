@@ -81,21 +81,21 @@ class Gas(Particle):
                 near_list = grid.get_near((self._col, self._row))
                 for particle in near_list:
                     temp_diff = (self._temp - particle.temp) / 50
-                    particle._update_temp(particle.temp + temp_diff)
-                    self._update_temp(self._temp - temp_diff)
+                    particle.update_temp(particle.temp + temp_diff)
+                    self.update_temp(self._temp - temp_diff)
 
                     # Metal -> lava when heated by fire
-                    if particle.name == "metal" and particle._temp_freeze <= particle.temp:
+                    if particle.name == "metal" and particle.temp_freeze <= particle.temp:
                         oldtemp = particle.temp
-                        particle._melt(driver, grid, particle_data.template_lava.clone(particle.col, particle.row))
-                        particle._update_temp(oldtemp)
+                        particle.melt(driver, grid, particle_data.template_lava.clone(particle.col, particle.row))
+                        particle.update_temp(oldtemp)
 
                     # Burning
                     if (particle.name == "powder" or particle.name == "wood") and (
-                            particle._temp_freeze <= particle.temp):
+                            particle.temp_freeze <= particle.temp):
                         oldtemp = particle.temp
-                        particle._melt(driver, grid, particle_data.template_fire.clone(particle.col, particle.row))
-                        particle._update_temp(oldtemp)
+                        particle.melt(driver, grid, particle_data.template_fire.clone(particle.col, particle.row))
+                        particle.update_temp(oldtemp)
 
                 if self._density > collider.density:
                     self._force_update_near(grid)

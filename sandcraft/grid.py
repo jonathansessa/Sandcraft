@@ -21,7 +21,7 @@ class Grid:
         self.__right = int((MARGIN + SANDBOX_WIDTH) / PARTICLE_SIZE)
         self.__top = int((MARGIN * 2) / PARTICLE_SIZE)
         self.__bottom = int((MARGIN * 2 + SANDBOX_HEIGHT) / PARTICLE_SIZE)
-        self.__cells = [[None for col in range(self.__num_cols)] for row in range(self.__num_rows)]
+        self.__cells = [[None for _ in range(self.__num_cols)] for _ in range(self.__num_rows)]
 
     """
         emplace adds a particle to its column and row, replacing the particle currently in that position.

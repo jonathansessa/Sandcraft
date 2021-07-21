@@ -8,7 +8,9 @@ class ToolMenu:
         self._y = y
         self._width = width
         self._height = 100
-        self._TOOLS = ["ADD", "DELETE", "ERASE", "LINE", "RECT", "OVAL", "INSPECT", "CLEAR", "REMOVE", "SAVE", "LOAD", "EXIT"]
+        self._TOOLS = ["ADD", "DELETE", "ERASE", "LINE", "RECT",
+                       "OVAL", "INSPECT", "CLEAR", "REMOVE", "SAVE",
+                       "LOAD", "EXIT"]
         self.tool_buttons = []
         self._rows = 0
         self.draw()
@@ -123,16 +125,17 @@ class ToolMenu:
 
         def update(self):
             if self._active:
-                pygame.draw.lines(self._surface, (255, 0, 0), True, ((self._x, self._y),
-                                                                         (self._x + self._width-1, self._y),
-                                                                         (self._x + self._width-1, self._y + self._height-1),
-                                                                         (self._x, self._y + self._height-1)))
+                pygame.draw.lines(
+                    self._surface, (255, 0, 0), True, ((self._x, self._y),
+                                                       (self._x + self._width-1, self._y),
+                                                       (self._x + self._width-1, self._y + self._height-1),
+                                                       (self._x, self._y + self._height-1)))
             else:
-                pygame.draw.lines(self._surface, (0, 0, 0), True, ((self._x, self._y),
-                                                                     (self._x + self._width - 1, self._y),
-                                                                     (self._x + self._width - 1,
-                                                                      self._y + self._height - 1),
-                                                                     (self._x, self._y + self._height - 1)))
+                pygame.draw.lines(
+                    self._surface, (0, 0, 0), True, ((self._x, self._y),
+                                                     (self._x + self._width - 1, self._y),
+                                                     (self._x + self._width - 1, self._y + self._height - 1),
+                                                     (self._x, self._y + self._height - 1)))
 
         def get_width(self):
             return self._width

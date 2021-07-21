@@ -103,8 +103,8 @@ class Driver:
     def clear_element(self):
         selected_elem = None
         for elem in self.__element_menu.element_buttons:
-            if elem._active:
-                selected_elem = elem._particle
+            if elem.active:
+                selected_elem = elem.particle
                 break
         if selected_elem is None:
             return
@@ -161,7 +161,7 @@ class Driver:
                 font = pygame.font.Font(FONT_PATH, 11)
                 if self.__grid.exists((x, y)):
                     particle = self.__grid.get((x, y))
-                    label = font.render(f"{particle.name}: {x}, {y} Temp: {str(round(particle._temp, 1))} C",
+                    label = font.render(f"{particle.name}: {x}, {y} Temp: {str(round(particle.temp, 1))} C",
                                         True, (255, 255, 255), (0, 0, 0))
                 else:
                     label = font.render(f"Empty: {x}, {y}", True, (255, 255, 255), (0, 0, 0))

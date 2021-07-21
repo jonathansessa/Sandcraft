@@ -62,7 +62,7 @@ def main():
             pygame.mouse.set_visible(False)
             driver.draw_tool_outline(pygame.mouse.get_pos(), sandbox, display)
         else:
-            element_menu.draw_tooltip(driver, pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
+            element_menu.draw_tooltip(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
             pygame.mouse.set_visible(True)
 
         # Update and show FPS (used for debugging)
