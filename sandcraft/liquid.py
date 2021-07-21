@@ -84,6 +84,18 @@ class Liquid(Particle):
                         particle._freeze(driver, grid, particle_data.template_basalt.clone(particle._col, particle._row))
                         particle._update_temp(oldtemp)
 
+                    # Smiley particles -> lava when melted
+                    if particle.name == "smiley" and particle._temp_freeze < particle._temp:
+                        oldtemp = particle._temp
+                        particle._melt(driver, grid, particle_data.template_lava.clone(particle._col, particle._row))
+                        particle._update_temp(oldtemp)
+
+                    # UFO particles -> lava when melted
+                    if particle.name == "ufo" and particle._temp_freeze < particle._temp:
+                        oldtemp = particle._temp
+                        particle._melt(driver, grid, particle_data.template_lava.clone(particle._col, particle._row))
+                        particle._update_temp(oldtemp)
+
                 # Water -> ice when below freezing
                 if self.name == "water" and self._temp_freeze > self._temp:
                     oldtemp = self._temp

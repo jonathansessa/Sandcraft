@@ -1,5 +1,6 @@
 from .particle import Particle
 from . import particle_data
+from random import *
 
 
 class Fixed(Particle):
@@ -42,6 +43,34 @@ class Fixed(Particle):
             if not grid.exists((self.col + 1, self.row)):
                 driver.add(particle_data.template_water.clone(self.col + 1, self.row))
 
+        if self.name == "bush":
+            growth = random()
+            if growth < 0.003 and self.row > 6:
+                if not grid.exists((self.col, self.row - 1)):
+                    driver.add(particle_data.template_bush.clone(self.col, self.row - 1))
+            growth = random()
+            if growth < 0.001:
+                if not grid.exists((self.col + 1, self.row)):
+                    driver.add(particle_data.template_bush.clone(self.col + 1, self.row))
+            growth = random()
+            if growth < 0.001:
+                if not grid.exists((self.col - 1, self.row)):
+                    driver.add(particle_data.template_bush.clone(self.col - 1, self.row))
+
+        if self.name == "vine":
+            growth = random()
+            if growth < 0.03 and self.row > 6:
+                if not grid.exists((self.col, self.row - 1)):
+                    driver.add(particle_data.template_vine.clone(self.col, self.row - 1))
+            growth = random()
+            if growth < 0.001 and self.row % 7 == 0:
+                if not grid.exists((self.col + 1, self.row)):
+                    driver.add(particle_data.template_vine.clone(self.col + 1, self.row))
+            growth = random()
+            if growth < 0.001 and self.row % 7 == 0:
+                if not grid.exists((self.col - 1, self.row)):
+                    driver.add(particle_data.template_vine.clone(self.col - 1, self.row))
+
         if self._needs_update is False:
             return
 
@@ -80,5 +109,7 @@ class Fixed(Particle):
             oldtemp = self._temp
             self._melt(driver, grid, particle_data.template_lava.clone(self._col, self._row))
             self._update_temp(oldtemp)
+
+
 
         self._needs_update = False

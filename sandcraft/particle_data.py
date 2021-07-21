@@ -198,6 +198,28 @@ template_acid = liquid.Liquid(
                     0,                      # flammability
                     "liquid")               # state
 
+template_bush = fixed.Fixed(
+                    0, 0,                   # position
+                    0.0, 0.0,               # velocity
+                    0.0, 0.0,               # acceleration
+                    20, -100, 400,          # temperature
+                    0.5,                    # density
+                    (17, 96, 22),           # color
+                    "bush",                 # name
+                    0.75,                   # flammability
+                    "fixed")                # state
+
+template_vine = fixed.Fixed(
+                    0, 0,                   # position
+                    0.0, 0.0,               # velocity
+                    0.0, 0.0,               # acceleration
+                    20, -100, 400,          # temperature
+                    0.5,                    # density
+                    (68, 214, 78),          # color
+                    "vine",                 # name
+                    0.75,                   # flammability
+                    "fixed")                # state
+
 template_solidbody_test = basic_solid_body.BasicSolidBody(
     {
         0: None,
@@ -253,7 +275,7 @@ template_solidbody_smiley = basic_solid_body.BasicSolidBody(
     0, 0,
     0.0, 1.0,
     0.0, 0.0,
-    20, 1000, 2230,
+    20, 600, 2230,
     1000.0,
     (255, 255, 0),
     "smiley",
@@ -287,7 +309,7 @@ template_ufo = ufo_solid_body.UFOSolidBody(
 
 # Particle dictionary used to create particle selection tool
 ELEMENTS = {
-    "FIXED": [template_wood, template_metal, template_basalt, template_ice],
+    "FIXED": [template_wood, template_metal, template_basalt, template_ice, template_bush, template_vine],
     "SOLIDS": [template_sand, template_powder, template_stone, template_snow],
     "LIQUIDS": [template_water, template_lava, template_oil, template_acid],
     "GASES": [template_steam, template_fire, template_fog],
