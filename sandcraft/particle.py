@@ -192,3 +192,11 @@ class Particle(GridObject, metaclass=abc.ABCMeta):
     @property
     def needs_update(self):
         return self._needs_update
+
+    def get_temp(self):
+        return self._temp
+
+    def set_temp(self, temp):
+        self._temp = temp
+
+    temp = property(get_temp, set_temp)
