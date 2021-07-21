@@ -84,30 +84,30 @@ class Fixed(Particle):
 
         # All fixed solids above boil temp -> gas
         if self._temp_boil <= self._temp:
-            self._boil(driver, grid, particle_data.template_steam.clone(self._col, self._row))
+            self.boil(driver, grid, particle_data.template_steam.clone(self._col, self._row))
 
         # Ice melts into water
         if self.name == "ice" and self._temp_freeze <= self._temp:
             oldtemp = self._temp
-            self._melt(driver, grid, particle_data.template_water.clone(self._col, self._row))
+            self.melt(driver, grid, particle_data.template_water.clone(self._col, self._row))
             self.update_temp(oldtemp)
 
         # Basalt and metal melts into lava
         if (self.name == "basalt" or self.name == "metal") and self._temp_freeze <= self._temp:
             oldtemp = self._temp
-            self._melt(driver, grid, particle_data.template_lava.clone(self._col, self._row))
+            self.melt(driver, grid, particle_data.template_lava.clone(self._col, self._row))
             self.update_temp(oldtemp)
 
         # Wood burns
         if self.name == "wood" and self._temp_freeze <= self._temp:
             oldtemp = self._temp
-            self._melt(driver, grid, particle_data.template_fire.clone(self._col, self._row))
+            self.melt(driver, grid, particle_data.template_fire.clone(self._col, self._row))
             self.update_temp(oldtemp)
 
         # Molten metal -> lava
         if self.name == "metal" and self._temp_freeze <= self._temp:
             oldtemp = self._temp
-            self._melt(driver, grid, particle_data.template_lava.clone(self._col, self._row))
+            self.melt(driver, grid, particle_data.template_lava.clone(self._col, self._row))
             self.update_temp(oldtemp)
 
         self._needs_update = False

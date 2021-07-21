@@ -77,3 +77,7 @@ class GridObject(metaclass=abc.ABCMeta):
     @property
     def state(self):
         return self._state
+
+    @property
+    def temp_freeze(self):
+        return self._temp_freeze
