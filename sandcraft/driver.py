@@ -7,6 +7,7 @@ from .painter import Painter
 from .particle_data import *
 from .particle import Particle
 from .gas import Gas
+from .music_mixer import MusicMixer
 
 
 def print_state_message(screen, text):
@@ -43,6 +44,9 @@ class Driver:
         # Initializes and clears Tkinter window, allows for filedialog
         root = tk.Tk()
         root.withdraw()
+
+        #initializing music player
+        self.__musicPlayer = MusicMixer()
 
         if mode == 'LOAD':
             self.load_state()
@@ -326,7 +330,7 @@ class Driver:
                             if elem == particle.name:
                                 self.undiscovered.remove(elem)
                                 break
-
+                        self.__musicPlayer.ding_Discovery()
                         click = False
                         while not click:
                             font = pygame.font.Font(FONT_PATH, 30)
