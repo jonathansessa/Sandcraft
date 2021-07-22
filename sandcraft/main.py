@@ -2,10 +2,12 @@ from . import screen
 from .start_menu import *
 from .driver import Driver
 from .config import TOMENU_EVENT_TYPE
+from pygame import mixer
 
 
 def main():
     pygame.init()
+    mixer.init()
     clock = pygame.time.Clock()
 
     # Display the start menu and store play mode
