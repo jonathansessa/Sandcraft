@@ -7,27 +7,27 @@ class MusicMixer:
         self.__backgroundMusic = mixer.Sound("music/background.wav")
         self.__backgroundMusic.set_volume(.05)
         self.__solidSound = mixer.Sound("music/solidSound.wav")
-        self.__solidSound.set_volume(.02)
+        self.__solidSound.set_volume(.01)
         self.__liquidSound = mixer.Sound("music/liquidSound.wav")
-        self.__liquidSound.set_volume(.02)
+        self.__liquidSound.set_volume(.03)
         self.__fixedSound = mixer.Sound("music/fixedSound.wav")
-        self.__fixedSound.set_volume(.02)
+        self.__fixedSound.set_volume(.03)
         self.__playingEffect = False
-        self.__partChannel = mixer.Channel(2)
-
-        #channel for background music, particles, and ding_dingdiscovery
+        self.__solidChannel = mixer.Channel(2)
+        self.__liquidChannel = mixer.Channel(3)
+        self.__fixedChannel = mixer.Channel(4)
+        #self.__gasChannel = mixer.Channel(5)
     
     def ding_discovery(self):
         self.__foundParticle.play()
 
     def play_particle_effect(self, partState):
-        if not self.__partChannel.get_busy():
-            if partState == "solid":
-                self.__partChannel.play(self.__solidSound)
-            if partState == "liquid":
-                self.__partChannel.play(self.__liquidSound)
-            if partState == "fixed":
-                self.__partChannel.play(self.__fixedSound)
+        if partState == "solid" and not self.__solidChannel.get_busy():
+            self.__solidChannel.play(self.__solidSound)
+        if partState == "liquid"and not self.__liquidChannel.get_busy():
+            self.__liquidChannel.play(self.__liquidSound)
+        if partState == "fixed"and not self.__fixedChannel.get_busy():
+            self.__fixedChannel.play(self.__fixedSound)
 
     def play_background(self):
             self.__backgroundMusic.play(-1)
