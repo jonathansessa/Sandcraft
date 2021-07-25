@@ -2,13 +2,16 @@ from . import screen
 from .start_menu import *
 from .driver import Driver
 from .config import TOMENU_EVENT_TYPE
-from pygame import mixer
+from .music_mixer import MusicMixer
 
 
 def main():
     pygame.init()
-    mixer.init()
     clock = pygame.time.Clock()
+    
+    #music player initialization and starting the background
+    music = MusicMixer()
+    music.play_background()
 
     # Display the start menu and store play mode
     mode = display_start_menu()
@@ -16,7 +19,7 @@ def main():
     # Create and define screen regions
     (display, sandbox, element_menu, tool_menu) = screen.init_screen(mode)
 
-    driver = Driver(mode, element_menu, display)
+    driver = Driver(mode, element_menu, display, music)
 
     if mode == "DISCOVERY":
         undiscovered = ["basalt", "steam", "fire", "water"]
@@ -32,6 +35,7 @@ def main():
                 pygame.quit()
                 sys.exit()
             elif event.type == TOMENU_EVENT_TYPE:
+                music.fade_mixer()
                 return
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if sandbox.collidepoint(pygame.mouse.get_pos()):
