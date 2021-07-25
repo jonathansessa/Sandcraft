@@ -182,8 +182,8 @@ class Particle(GridObject, metaclass=abc.ABCMeta):
         self._temp = new_temp
 
     """
-
-    """    
+        properties (read only)
+    """
 
     @property
     def is_live(self):
