@@ -7,7 +7,6 @@ from .painter import Painter
 from .particle_data import *
 from .particle import Particle
 from .gas import Gas
-from .music_mixer import MusicMixer
 
 
 def print_state_message(screen, text):
@@ -25,7 +24,7 @@ def print_state_message(screen, text):
 
 
 class Driver:
-    def __init__(self, mode, element_menu, display):
+    def __init__(self, mode, element_menu, display, music):
         self.__particles = []
         self.__solid_bodies = []
         self.__grid = Grid()
@@ -40,13 +39,12 @@ class Driver:
         self.undiscovered = []
         self.__element_menu = element_menu
         self.__display = display
+        self.__musicPlayer = music
 
         # Initializes and clears Tkinter window, allows for filedialog
         root = tk.Tk()
         root.withdraw()
 
-        #initializing music player
-        self.__musicPlayer = MusicMixer()
 
         if mode == 'LOAD':
             self.load_state()
@@ -58,6 +56,7 @@ class Driver:
     def add(self, particle):
         self.__particles.append(particle)
         self.__grid.emplace(particle)
+        self.__musicPlayer.play_particle_effect(particle.get_state())
 
     def add_list(self, particle_list):
         for particle in particle_list:
@@ -330,7 +329,10 @@ class Driver:
                             if elem == particle.name:
                                 self.undiscovered.remove(elem)
                                 break
-                        self.__musicPlayer.ding_Discovery()
+                        #MUSIC IMPLIMENTATION
+                        self.__musicPlayer.ding_discovery()
+                        self.__musicPlayer.change_volume_background(.01)
+
                         click = False
                         while not click:
                             font = pygame.font.Font(FONT_PATH, 30)
@@ -352,6 +354,7 @@ class Driver:
                                     click = True
                                 if event.type == pygame.KEYDOWN:
                                     click = True
+                        self.__musicPlayer.change_volume_background(.05)
                         return
 
     def save_state(self):
