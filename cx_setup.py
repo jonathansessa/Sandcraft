@@ -2,8 +2,7 @@ import sys
 from cx_Freeze import setup, Executable
 
 build_exe_opts = {  
-                    "packages": ["pygame","sandcraft"],
-                    "excludes": ["tkinter"]
+                    "packages": ["pygame","sandcraft"]
                 }
 
 base = None
