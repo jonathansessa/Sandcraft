@@ -1,4 +1,4 @@
-from .config import *
+from sandcraft.config import *
 
 
 class ToolMenu:

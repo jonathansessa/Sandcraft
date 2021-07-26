@@ -1,4 +1,4 @@
-from .particle import Particle
+from sandcraft.particle import Particle
 
 
 class SolidBodyParticle(Particle):

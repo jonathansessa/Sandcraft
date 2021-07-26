@@ -1,5 +1,5 @@
-from .element_menu import *
-from .tool_menu import *
+from sandcraft.element_menu import *
+from sandcraft.tool_menu import *
 
 
 def init_screen(mode):

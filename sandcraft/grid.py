@@ -1,5 +1,5 @@
-from .config import *
-from .particle import Particle
+from sandcraft.config import *
+from sandcraft.particle import Particle
 
 """
     px_to_cell converts pixel coordinates into column or row coordinates, depending on whether you

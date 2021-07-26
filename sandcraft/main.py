@@ -1,7 +1,7 @@
-from . import screen
-from .start_menu import *
-from .driver import Driver
-from .config import TOMENU_EVENT_TYPE
+from sandcraft import screen
+from sandcraft.start_menu import *
+from sandcraft.driver import Driver
+from sandcraft.config import TOMENU_EVENT_TYPE
 from pygame import mixer
 
 

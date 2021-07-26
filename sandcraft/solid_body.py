@@ -1,8 +1,8 @@
 import abc
 import math
 
-from .grid_object import GridObject
-from .solid_body_particle import SolidBodyParticle
+from sandcraft.grid_object import GridObject
+from sandcraft.solid_body_particle import SolidBodyParticle
 
 
 class SolidBody(GridObject):

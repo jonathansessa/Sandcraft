@@ -1,5 +1,5 @@
 import sys
-from .config import *
+from sandcraft.config import *
 
 
 def create_menu_button(menu, text, y):

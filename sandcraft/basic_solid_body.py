@@ -1,4 +1,4 @@
-from .solid_body import SolidBody
+from sandcraft.solid_body import SolidBody
 
 
 class BasicSolidBody(SolidBody):

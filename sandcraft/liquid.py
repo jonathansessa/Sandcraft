@@ -1,6 +1,6 @@
 import random
-from .particle import Particle
-from . import particle_data
+from sandcraft.particle import Particle
+from sandcraft import particle_data
 
 
 class Liquid(Particle):

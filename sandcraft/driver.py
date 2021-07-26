@@ -1,13 +1,13 @@
 import pickle
 import tkinter as tk
 from tkinter import filedialog
-from .config import *
-from .grid import Grid, px_to_cell
-from .painter import Painter
-from .particle_data import *
-from .particle import Particle
-from .gas import Gas
-from .music_mixer import MusicMixer
+from sandcraft.config import *
+from sandcraft.grid import Grid, px_to_cell
+from sandcraft.painter import Painter
+from sandcraft.particle_data import *
+from sandcraft.particle import Particle
+from sandcraft.gas import Gas
+from sandcraft.music_mixer import MusicMixer
 
 
 def print_state_message(screen, text):
