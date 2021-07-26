@@ -1,4 +1,4 @@
-from .grid import px_to_cell
+from sandcraft.grid import px_to_cell
 
 
 class Painter:
