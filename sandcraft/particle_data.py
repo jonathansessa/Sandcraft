@@ -1,9 +1,9 @@
-from . import solid
-from . import liquid
-from . import gas
-from . import fixed
-from . import basic_solid_body
-from . import ufo_solid_body
+from sandcraft import solid
+from sandcraft import liquid
+from sandcraft import gas
+from sandcraft import fixed
+from sandcraft import basic_solid_body
+from sandcraft import ufo_solid_body
 
 
 """
