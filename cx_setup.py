@@ -2,8 +2,8 @@ import sys
 from cx_Freeze import setup, Executable
 
 build_exe_opts = {  
-                    "build_exe": ">/sandcraft/",
-                    "packages": ["pygame","sandcraft"]
+                    "packages": ["pygame","sandcraft"],
+                    "excludes": ["tkinter"]
                 }
 
 base = None
@@ -16,5 +16,5 @@ setup(
     author = "jsessa@ufl.edu",
     description = "Particle physics sandbox game",
     options = {"build_exe": build_exe_opts},
-    executables = [Executable("main.py", base = base, target_name = "sandcraft.exe")]
+    executables = [Executable("sandcraft/main.py", base = base, target_name = "sandcraft.exe")]
 )
