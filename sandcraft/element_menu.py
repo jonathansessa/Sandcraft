@@ -1,6 +1,6 @@
 import pygame
-from .config import FONT_PATH, BG_COLOR
-from .particle_data import ELEMENTS
+from sandcraft.config import FONT_PATH, BG_COLOR
+from sandcraft.particle_data import ELEMENTS
 
 
 class ElementMenu:
