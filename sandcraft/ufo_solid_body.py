@@ -1,4 +1,4 @@
-from .basic_solid_body import BasicSolidBody
+from sandcraft.basic_solid_body import BasicSolidBody
 
 
 class UFOSolidBody(BasicSolidBody):
