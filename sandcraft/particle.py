@@ -1,7 +1,7 @@
 import abc
 import pygame
-from .config import PARTICLE_SIZE
-from .grid_object import GridObject
+from sandcraft.config import PARTICLE_SIZE
+from sandcraft.grid_object import GridObject
 
 
 class Particle(GridObject, metaclass=abc.ABCMeta):
