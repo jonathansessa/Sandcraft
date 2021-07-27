@@ -1,3 +1,4 @@
+import pygame.mouse
 from sandcraft import screen
 from sandcraft.start_menu import *
 from sandcraft.driver import Driver
@@ -41,7 +42,7 @@ def main():
                 elif element_menu.contains(event.pos[0], event.pos[1]):
                     element_menu.update(driver, event.pos[0], event.pos[1])
                 elif tool_menu.contains(event.pos[0], event.pos[1]):
-                    tool_menu.update(driver, event.pos[0], event.pos[1])
+                    tool_menu.update(driver, event.pos[0], event.pos[1], True)
             elif event.type == pygame.MOUSEBUTTONUP:
                 driver.set_tool_use(False)
                 driver.end_active_shape()
@@ -64,8 +65,11 @@ def main():
             pygame.mouse.set_visible(False)
             driver.draw_tool_outline(pygame.mouse.get_pos(), sandbox, display)
         else:
-            element_menu.draw_tooltip(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
             pygame.mouse.set_visible(True)
+            pygame.mouse.set_system_cursor(pygame.SYSTEM_CURSOR_ARROW)
+            element_menu.draw_tooltip(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
+            if tool_menu.contains(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
+                tool_menu.update(driver, pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1], False)
 
         # Update and show FPS (used for debugging)
         screen.update_fps(display, clock)

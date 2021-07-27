@@ -1,3 +1,4 @@
+import pygame.mouse
 from sandcraft.config import *
 
 
@@ -28,7 +29,9 @@ class ToolMenu:
             offset_height = 0
             for tool in self.__tool_groups[group]:
                 new_button = self.ToolButton(self._surface, button_x, button_y, tool)
-
+                if tool == "ADD":
+                    new_button.set_active(None)
+                    new_button.update()
                 button_x += new_button.get_width() + 10
                 offset_height = new_button.get_height()
                 self.tool_buttons.append(new_button)
@@ -41,31 +44,38 @@ class ToolMenu:
         self._rows = rows
 
     # Checks if a button was clicked, then changes corresponding button to active
-    def update(self, driver, x, y):
-        for b in self.tool_buttons:
-            if b.contains(x, y):
-                for button in self.tool_buttons:
+    def update(self, driver, x, y, click):
+        toggle_inactive = False
+        for button in self.tool_buttons:
+            if button.contains(x, y):
+                pygame.mouse.set_system_cursor(pygame.SYSTEM_CURSOR_HAND)
+                if click:
+                    if button.get_tool() in ["ADD", "DELETE", "ERASE", "LINE", "RECT", "OVAL", "INSPECT"]:
+                        toggle_inactive = True
+                        button.set_active(driver)
+                    elif button.get_tool() == "CLEAR":
+                        driver.clear_sandbox()
+                    elif button.get_tool() == "REMOVE":
+                        driver.clear_element()
+                    elif button.get_tool() == "SAVE":
+                        driver.save_state()
+                    elif button.get_tool() == "LOAD":
+                        driver.load_state()
+                    elif button.get_tool() == "EXIT":
+                        pygame.event.post(TOMENU_EVENT)
+                    elif button.get_tool() == "-":
+                        driver.set_size(-1)
+                        self.update_tool_size(driver)
+                    elif button.get_tool() == "+":
+                        driver.set_size(1)
+                        self.update_tool_size(driver)
+                else:
+                    return
+        if click:
+            for button in self.tool_buttons:
+                if not button.contains(x, y) and toggle_inactive:
                     button.set_inactive()
-                    if button.contains(x, y):
-                        if button.get_tool() in ["ADD", "DELETE", "ERASE", "LINE", "RECT", "OVAL", "INSPECT"]:
-                            button.set_active(driver)
-                        elif button.get_tool() == "CLEAR":
-                            driver.clear_sandbox()
-                        elif button.get_tool() == "REMOVE":
-                            driver.clear_element()
-                        elif button.get_tool() == "SAVE":
-                            driver.save_state()
-                        elif button.get_tool() == "LOAD":
-                            driver.load_state()
-                        elif button.get_tool() == "EXIT":
-                            pygame.event.post(TOMENU_EVENT)
-                        elif button.get_tool() == "-":
-                            driver.set_size(-1)
-                            self.update_tool_size(driver)
-                        elif button.get_tool() == "+":
-                            driver.set_size(1)
-                            self.update_tool_size(driver)
-                    button.update()
+                button.update()
 
     def contains(self, x, y):
         if x < self._x or self._x + self._width < x:
@@ -78,12 +88,12 @@ class ToolMenu:
         tool_size = driver.get_size()
         font = pygame.font.Font(FONT_PATH, 11)
         label = font.render(f"BRUSH SIZE: {tool_size} ", True, pygame.Color(255, 255, 255), BG_COLOR)
-        top = self._y + 10 + 35 * self._rows
+        top = self._y + 5 + 35 * self._rows
         left = self._x
         self._surface.blit(label, (left, top))
 
     def draw_adjustment(self, tool_size, rows):
-        top = self._y + 10 + 35 * rows
+        top = self._y + 5 + 35 * rows
         left = self._x
 
         font = pygame.font.Font(FONT_PATH, 11)
@@ -151,7 +161,8 @@ class ToolMenu:
 
         def set_active(self, driver):
             self._active = True
-            driver.set_tool(self._name)
+            if driver is not None:
+                driver.set_tool(self._name)
 
         def set_inactive(self):
             self._active = False
