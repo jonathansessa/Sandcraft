@@ -15,9 +15,9 @@ class Painter:
                 if grid.is_in_bounds([x, y]):
                     if grid.exists([x, y]) is False and driver.get_tool() == "ADD":
                         self.__temp.clone(x, y).emplace(driver)
-                    elif grid.exists([x, y]) is True and driver.get_tool() == "DELETE":
-                        driver.delete(grid.get([x, y]))
                     elif grid.exists([x, y]) is True and driver.get_tool() == "ERASE":
+                        driver.delete(grid.get([x, y]))
+                    elif grid.exists([x, y]) is True and driver.get_tool() == "DELETE":
                         if grid.get([x, y]).name == self.__temp.name:
                             driver.delete(grid.get([x, y]))
 

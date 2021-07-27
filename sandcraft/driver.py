@@ -45,7 +45,7 @@ class Driver:
         root = tk.Tk()
         root.withdraw()
 
-        #initializing music player
+        # initializing music player
         self.__musicPlayer = MusicMixer()
 
         if mode == 'LOAD':
