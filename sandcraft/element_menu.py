@@ -35,14 +35,18 @@ class ElementMenu:
 
     # First checks if a button was clicked, then changes corresponding button to active
     def update(self, driver, x, y):
-        for b in self.element_buttons:
-            if b.contains(x, y):
-                for button in self.element_buttons:
-                    button.set_active(False)
-                    if button.contains(x, y) and button.unlocked:
-                        button.set_active(True)
-                        driver.set_current_element(button.get_element())
-                    button.update()
+        toggle = False
+        for button in self.element_buttons:
+            if button.contains(x, y) and button.unlocked:
+                toggle = True
+                driver.set_current_element(button.get_element())
+            button.update()
+        if toggle:
+            for button in self.element_buttons:
+                button.set_active(False)
+                if button.contains(x, y) and button.unlocked:
+                    button.set_active(True)
+                button.update()
 
     def draw_tooltip(self, mouse_x, mouse_y):
         elem_menu_rect = pygame.Rect(self._x, self._y, self._width, self._height)
@@ -54,6 +58,7 @@ class ElementMenu:
             button.update()
             if button.contains(mouse_x, mouse_y) and button.unlocked:
                 hovered = button
+                pygame.mouse.set_system_cursor(pygame.SYSTEM_CURSOR_HAND)
         if hovered is None:
             return
 
@@ -78,8 +83,11 @@ class ElementMenu:
 
         for e in elements:
             if create:
-                self.element_buttons.append(self.ElementButton(surface, left, top, self.BUTTON_SIZE,
-                                                               self.BUTTON_SIZE, e))
+                new_button = self.ElementButton(surface, left, top, self.BUTTON_SIZE, self.BUTTON_SIZE, e)
+                self.element_buttons.append(new_button)
+                if e.name == "sand":
+                    new_button.set_active(True)
+                    new_button.update()
             left += self.BUTTON_SIZE + self.MARGIN
             if left + self.BUTTON_SIZE > x + width:
                 left = x
