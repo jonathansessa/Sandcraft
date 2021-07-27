@@ -1,1 +1,2 @@
 include sandcraft/fonts/*.ttf
+include sandcraft/soundFiles/*.wav

@@ -8,9 +8,9 @@ class ToolMenu:
         self._y = y
         self._width = width
         self._height = 100
-        self._TOOLS = ["ADD", "DELETE", "ERASE", "LINE", "RECT",
-                       "OVAL", "INSPECT", "CLEAR", "REMOVE", "SAVE",
-                       "LOAD", "EXIT"]
+        self.__tool_groups = {"TOOLS": ["ADD", "ERASE", "CLEAR", "REMOVE"],
+                              "SHAPES": ["LINE", "RECT", "OVAL"],
+                              "FILE": ["INSPECT", "SAVE", "LOAD", "EXIT"]}
         self.tool_buttons = []
         self._rows = 0
         self.draw()
@@ -19,20 +19,23 @@ class ToolMenu:
         button_x = self._x
         button_y = self._y
         rows = 1
-        for tool in self._TOOLS:
-            new_button = self.ToolButton(self._surface, button_x, button_y, tool)
+        for group in self.__tool_groups:
+            font = pygame.font.Font(FONT_PATH, 11)
+            label = font.render(group, True, pygame.Color(255, 255, 255))
+            self._surface.blit(label, (button_x, button_y))
+            button_y += label.get_height()
 
-            # If new button is outside of tool menu
-            if button_x + new_button.get_width() > self._width:  # + self._x:
-                pygame.draw.rect(self._surface, BG_COLOR,
-                                 pygame.Rect(button_x, button_y, new_button.get_width(), new_button.get_height()))
-                button_x = self._x
-                button_y = new_button.get_height() + 10 + button_y  # self._y +
+            offset_height = 0
+            for tool in self.__tool_groups[group]:
                 new_button = self.ToolButton(self._surface, button_x, button_y, tool)
-                rows += 1
 
-            button_x += new_button.get_width() + 10
-            self.tool_buttons.append(new_button)
+                button_x += new_button.get_width() + 10
+                offset_height = new_button.get_height()
+                self.tool_buttons.append(new_button)
+
+            button_x = self._x
+            button_y = offset_height + 10 + button_y
+            rows += 1
 
         self.draw_adjustment(1, rows)
         self._rows = rows
@@ -75,12 +78,12 @@ class ToolMenu:
         tool_size = driver.get_size()
         font = pygame.font.Font(FONT_PATH, 11)
         label = font.render(f"BRUSH SIZE: {tool_size} ", True, pygame.Color(255, 255, 255), BG_COLOR)
-        top = self._y + 35 * self._rows
+        top = self._y + 10 + 35 * self._rows
         left = self._x
         self._surface.blit(label, (left, top))
 
     def draw_adjustment(self, tool_size, rows):
-        top = self._y + 35 * rows
+        top = self._y + 10 + 35 * rows
         left = self._x
 
         font = pygame.font.Font(FONT_PATH, 11)
