@@ -3,6 +3,7 @@ from sandcraft import screen
 from sandcraft.start_menu import *
 from sandcraft.driver import Driver
 from sandcraft.config import TOMENU_EVENT_TYPE
+from sandcraft.music_mixer import MusicMixer
 from pygame import mixer
 
 
@@ -12,12 +13,13 @@ def main():
     clock = pygame.time.Clock()
 
     # Display the start menu and store play mode
+    music = MusicMixer()
     mode = display_start_menu()
 
     # Create and define screen regions
     (display, sandbox, element_menu, tool_menu) = screen.init_screen(mode)
 
-    driver = Driver(mode, element_menu, display)
+    driver = Driver(mode, element_menu, display, music)
 
     if mode == "DISCOVERY":
         undiscovered = ["basalt", "steam", "fire", "water"]
@@ -33,6 +35,7 @@ def main():
                 pygame.quit()
                 sys.exit()
             elif event.type == TOMENU_EVENT_TYPE:
+                music.endMixer()
                 return
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if sandbox.collidepoint(pygame.mouse.get_pos()):
