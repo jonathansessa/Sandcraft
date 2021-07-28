@@ -9,7 +9,6 @@ class MusicMixer:
         self.__backgroundMusic = mixer.Sound(os.path.join(os.path.dirname(__file__), 'soundFiles', 'background.wav'))
         self.__backgroundMusic.set_volume(.05)
         self.backgroundPlay()   
-        print("created musicmixer..")
     
     def ding_Discovery(self):
         self.__foundParticle.play()
@@ -21,6 +20,5 @@ class MusicMixer:
         self.__backgroundMusic.set_volume(vol)
 
     def endMixer(self):
-        mixer.fadeout(1500)
-        print("deleting music mixer..")
+        mixer.stop()
         del self
