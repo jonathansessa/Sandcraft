@@ -25,7 +25,7 @@ def print_state_message(screen, text):
 
 
 class Driver:
-    def __init__(self, mode, element_menu, display):
+    def __init__(self, mode, element_menu, display, music):
         self.__particles = []
         self.__solid_bodies = []
         self.__grid = Grid()
@@ -40,13 +40,11 @@ class Driver:
         self.undiscovered = []
         self.__element_menu = element_menu
         self.__display = display
+        self.__musicPlayer = music
 
         # Initializes and clears Tkinter window, allows for filedialog
         root = tk.Tk()
         root.withdraw()
-
-        # initializing music player
-        self.__musicPlayer = MusicMixer()
 
         if mode == 'LOAD':
             self.load_state()
@@ -331,6 +329,7 @@ class Driver:
                                 self.undiscovered.remove(elem)
                                 break
                         self.__musicPlayer.ding_Discovery()
+                        self.__musicPlayer.change_volume_background(.01)
                         click = False
                         while not click:
                             font = pygame.font.Font(FONT_PATH, 30)
@@ -352,6 +351,7 @@ class Driver:
                                     click = True
                                 if event.type == pygame.KEYDOWN:
                                     click = True
+                        self.__musicPlayer.change_volume_background(.05)
                         return
 
     def save_state(self):
