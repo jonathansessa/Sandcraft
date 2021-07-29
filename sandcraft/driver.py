@@ -7,7 +7,6 @@ from sandcraft.painter import Painter
 from sandcraft.particle_data import *
 from sandcraft.particle import Particle
 from sandcraft.gas import Gas
-from sandcraft.music_mixer import MusicMixer
 
 
 def print_state_message(screen, text):
