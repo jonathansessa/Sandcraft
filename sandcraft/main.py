@@ -4,12 +4,10 @@ from sandcraft.start_menu import *
 from sandcraft.driver import Driver
 from sandcraft.config import TOMENU_EVENT_TYPE
 from sandcraft.music_mixer import MusicMixer
-from pygame import mixer
 
 
 def main():
     pygame.init()
-    mixer.init()
     clock = pygame.time.Clock()
 
     # Display the start menu and store play mode
