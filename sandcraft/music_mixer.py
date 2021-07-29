@@ -20,5 +20,5 @@ class MusicMixer:
         self.__backgroundMusic.set_volume(vol)
 
     def endMixer(self):
-        mixer.stop()
+        mixer.fadeout(1000)
         del self
